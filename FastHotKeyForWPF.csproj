@@ -15,7 +15,7 @@
 		<Description>Quickly build global hotkeys for WPF</Description>
 		<PackageProjectUrl>https://www.nuget.org/packages/FastHotKeyForWPF/</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/ChengduNeusoftUniversity-FengJunjie-Y22/FastHotKeyForWPF</RepositoryUrl>
+		<RepositoryUrl>https://github.com/Axvser/FastHotKeyForWPF</RepositoryUrl>
 		<PackageOutputPath />
 		<NeutralLanguage>zh-CN</NeutralLanguage>
 		<RepositoryType>git</RepositoryType>

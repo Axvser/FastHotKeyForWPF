@@ -4,9 +4,8 @@
 - [☆ github - The best document reading experience][1]
 - [nuget][2]
 
-[1]: https://github.com/ChengduNeusoftUniversity-FengJunjie-Y22/FastHotKeyForWPF
+[1]: https://github.com/Axvser/FastHotKeyForWPF
 [2]: https://www.nuget.org/packages/FastHotKeyForWPF/
-[4]: https://gitee.com/CNU-FJj-Y22/FastHotKeyForWPF
 
 ---
 
