@@ -9,11 +9,11 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>FastHotKeyForWPF</Title>
-		<Version>2.3.0</Version>
+		<Version>2.3.1</Version>
 		<Authors>KeQinZhenHaoKan</Authors>
 		<Company></Company>
 		<Description>Quickly build global hotkeys for WPF</Description>
-		<PackageProjectUrl>https://www.nuget.org/packages/FastHotKeyForWPF/</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/Axvser/FastHotKeyForWPF</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/Axvser/FastHotKeyForWPF</RepositoryUrl>
 		<PackageOutputPath />

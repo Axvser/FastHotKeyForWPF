@@ -1,7 +1,7 @@
 ﻿# FastHotKeyForWPF
 ## Quickly build global hotkeys in WPF programs
 ## Supported [ .NET6.0 ] [ .NET8.0 ]
-- [☆ github - The best document reading experience][1]
+- [github][1]
 - [nuget][2]
 
 [1]: https://github.com/Axvser/FastHotKeyForWPF
