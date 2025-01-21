@@ -100,7 +100,7 @@ namespace FastHotKeyForWPF
         /// <summary>
         /// Key => Uint
         /// </summary>
-        public static readonly Dictionary<Key, uint> KeyToUints = new Dictionary<Key, uint>()
+        public static readonly Dictionary<Key, uint> KeyToUints = new()
         {
 
         { Key.LeftCtrl, (uint)ModelKeys.CTRL },
@@ -173,7 +173,7 @@ namespace FastHotKeyForWPF
         /// <summary>
         /// Key => NormalKeys
         /// </summary>
-        public static readonly Dictionary<Key, NormalKeys> KeyToNormalKeys = new Dictionary<Key, NormalKeys>()
+        public static readonly Dictionary<Key, NormalKeys> KeyToNormalKeys = new()
         {
         { Key.Up, NormalKeys.UP },
         { Key.Down, NormalKeys.DOWN },
@@ -241,7 +241,7 @@ namespace FastHotKeyForWPF
         /// <summary>
         /// Key => ModelKeys
         /// </summary>
-        public static readonly Dictionary<Key, ModelKeys> KeyToModelKeys = new Dictionary<Key, ModelKeys>()
+        public static readonly Dictionary<Key, ModelKeys> KeyToModelKeys = new()
         {
         { Key.LeftCtrl, ModelKeys.CTRL },
         { Key.LeftAlt, ModelKeys.ALT },
@@ -284,7 +284,7 @@ namespace FastHotKeyForWPF
         /// <returns>uint 拆分为多个 ModelKeys 的结果集合</returns>
         public static T UintSplit<T>(uint value) where T : ICollection<ModelKeys>, new()
         {
-            T result = new T();
+            T result = new();
 
             foreach (ModelKeys item in Enum.GetValues(typeof(ModelKeys)))
             {
@@ -326,12 +326,11 @@ namespace FastHotKeyForWPF
         {
             if (typeof(T) == typeof(Key))
             {
-                if (!UintToKeys.ContainsKey(value))
+                if (!UintToKeys.TryGetValue(value, out Key temp))
                 {
                     return new T();
                 }
 
-                Key temp = UintToKeys[value];
                 return (T)(object)temp;
             }
             else
@@ -374,11 +373,7 @@ namespace FastHotKeyForWPF
                 List<ModelKeys> original = UintSplit<List<ModelKeys>>(item.CurrentKeyA);
                 ModelKeys model = KeyToModelKeys[key];
 
-                if (original.Contains(model))
-                {
-                    original.Remove(model);
-                }
-                else
+                if (!original.Remove(model))
                 {
                     original.Add(model);
                 }

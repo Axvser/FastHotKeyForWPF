@@ -17,7 +17,7 @@ namespace FastHotKeyForWPF
         /// <summary>
         /// 注册信息
         /// </summary>
-        public List<RegisterInfo> RegisterList { get; internal set; } = new List<RegisterInfo>();
+        public List<RegisterInfo> RegisterList { get; internal set; } = [];
 
         /// <summary>
         /// 将注册ID作为索引值,查询注册消息
@@ -62,7 +62,7 @@ namespace FastHotKeyForWPF
         {
             get
             {
-                List<RegisterInfo> list = new List<RegisterInfo>();
+                List<RegisterInfo> list = [];
 
                 foreach (RegisterInfo register in RegisterList)
                 {

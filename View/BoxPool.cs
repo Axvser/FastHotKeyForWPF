@@ -17,8 +17,8 @@ namespace FastHotKeyForWPF
     {
         internal static int ItemID = 0;
 
-        internal static List<IAutoHotKeyProperty> PropertyItems = new List<IAutoHotKeyProperty>();
-        internal static List<IAutoHotKeyUpdate> ModelItems = new List<IAutoHotKeyUpdate>();
+        internal static List<IAutoHotKeyProperty> PropertyItems = [];
+        internal static List<IAutoHotKeyUpdate> ModelItems = [];
 
         /// <summary>
         /// 向控件池添加控件
@@ -56,8 +56,8 @@ namespace FastHotKeyForWPF
         /// <param name="prop">控件自身引用</param>
         public static void RemoveSame(IAutoHotKeyProperty prop)
         {
-            List<IAutoHotKeyProperty> target = new List<IAutoHotKeyProperty>();
-            List<int> position = new List<int>();
+            List<IAutoHotKeyProperty> target = [];
+            List<int> position = [];
 
             int Counter = 0;
 

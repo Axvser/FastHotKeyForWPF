@@ -76,8 +76,10 @@ namespace FastHotKeyForWPF
                 Window mainWindow = Application.Current.MainWindow;
                 if (mainWindow != null)
                 {
-                    Instance = new GlobalHotKey();
-                    Instance.WindowhWnd = new WindowInteropHelper(mainWindow).Handle;
+                    Instance = new GlobalHotKey
+                    {
+                        WindowhWnd = new WindowInteropHelper(mainWindow).Handle
+                    };
                     Instance.Install();
 
                     for (int i = 0; i < BoxPool.ModelItems.Count; i++)
@@ -127,20 +129,14 @@ namespace FastHotKeyForWPF
         /// </summary>
         public static void EditHandler(object modelKeys, object normalKey, HotKeyEventHandler? handler)
         {
-            if (Instance != null)
-            {
-                Instance.EditExistHandler(KeyHelper.ValueToUint(modelKeys), KeyHelper.ValueToUint(normalKey), handler);
-            }
+            Instance?.EditExistHandler(KeyHelper.ValueToUint(modelKeys), KeyHelper.ValueToUint(normalKey), handler);
         }
         /// <summary>
         /// 修改热键的热键组合
         /// </summary>
         public static void EditKeys(HotKeyEventHandler handler, object modelKeys, object normalKey)
         {
-            if (Instance != null)
-            {
-                Instance.EditExistKeys(handler, KeyHelper.ValueToUint(modelKeys), KeyHelper.ValueToUint(normalKey));
-            }
+            Instance?.EditExistKeys(handler, KeyHelper.ValueToUint(modelKeys), KeyHelper.ValueToUint(normalKey));
         }
 
         /// <summary>
@@ -148,40 +144,28 @@ namespace FastHotKeyForWPF
         /// </summary>
         public static void Clear()
         {
-            if (Instance != null)
-            {
-                Instance.RemoveAllHotKeys();
-            }
+            Instance?.RemoveAllHotKeys();
         }
         /// <summary>
         /// 删除指定编号的热键
         /// </summary>
         public static void DeleteById(int id)
         {
-            if (Instance != null)
-            {
-                Instance.RemoveExistRegisterByID(id);
-            }
+            Instance?.RemoveExistRegisterByID(id);
         }
         /// <summary>
         /// 清除与指定函数关联的热键
         /// </summary>
         public static void DeleteByHandler(HotKeyEventHandler handler)
         {
-            if (Instance != null)
-            {
-                Instance.RemoveExistRegisterByHandler(handler);
-            }
+            Instance?.RemoveExistRegisterByHandler(handler);
         }
         /// <summary>
         /// 清除与指定热键组合关联的热键
         /// </summary>
         public static void DeleteByKeys(object modelKeys, object normalKey)
         {
-            if (Instance != null)
-            {
-                Instance.RemoveExistRegisterByKeys(KeyHelper.ValueToUint(modelKeys), KeyHelper.ValueToUint(normalKey));
-            }
+            Instance?.RemoveExistRegisterByKeys(KeyHelper.ValueToUint(modelKeys), KeyHelper.ValueToUint(normalKey));
         }
 
         /// <summary>
@@ -251,11 +235,11 @@ namespace FastHotKeyForWPF
 
         private int Counter = 0;
 
-        private Dictionary<int, HotKeyEventHandler?> Handlers = new Dictionary<int, HotKeyEventHandler?>();
+        private Dictionary<int, HotKeyEventHandler?> Handlers { get; set; } = [];
 
-        private RegisterCollection RegisterList = new RegisterCollection();
+        private RegisterCollection RegisterList { get; set; } = new();
 
-        private List<Tuple<uint, uint>> ProtectList = new List<Tuple<uint, uint>>();
+        private List<Tuple<uint, uint>> ProtectList { get; set; } = [];
 
         private IntPtr WhileKeyInvoked(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
@@ -265,8 +249,10 @@ namespace FastHotKeyForWPF
                     int id = wParam.ToInt32();
                     try
                     {
-                        HotKeyEventArgs Args = new HotKeyEventArgs();
-                        Args.RegisterInfo = RegisterList[id];
+                        HotKeyEventArgs Args = new()
+                        {
+                            RegisterInfo = RegisterList[id]
+                        };
                         Handlers[id]?.Invoke(this, Args);
                     }
                     catch (KeyNotFoundException)
@@ -303,7 +289,7 @@ namespace FastHotKeyForWPF
             if (result)
             {
                 Handlers.Add(id, handler);
-                RegisterInfo info = new RegisterInfo(id, mode, key, handler);
+                RegisterInfo info = new(id, mode, key, handler);
                 RegisterList.Add(info);
                 Counter++;
                 return info.RegisterID;
@@ -322,7 +308,7 @@ namespace FastHotKeyForWPF
                 {
                     RemoveExistRegisterByID(info.RegisterID);
                     RegisterHotKey(WindowhWnd, info.RegisterID, mode, (uint)key);
-                    RegisterInfo result = new RegisterInfo(info.RegisterID, mode, key, handler);
+                    RegisterInfo result = new(info.RegisterID, mode, key, handler);
                     RegisterList.Add(result);
                     Handlers.Add(result.RegisterID, handler);
                     break;
@@ -340,7 +326,7 @@ namespace FastHotKeyForWPF
                 {
                     RemoveExistRegisterByID(info.RegisterID);
                     RegisterHotKey(WindowhWnd, info.RegisterID, mode, (uint)key);
-                    RegisterInfo result = new RegisterInfo(info.RegisterID, mode, key, handler);
+                    RegisterInfo result = new(info.RegisterID, mode, key, handler);
                     RegisterList.Add(result);
                     Handlers.Add(result.RegisterID, handler);
                     break;
@@ -364,7 +350,7 @@ namespace FastHotKeyForWPF
 
             if (UnregisterHotKey(WindowhWnd, id))
             {
-                if (Handlers.ContainsKey(id)) { Handlers.Remove(id); };
+                Handlers.Remove(id); ;
 
                 RegisterInfo? target = null;
                 foreach (RegisterInfo registerInfo in RegisterList.RegisterList)
@@ -393,7 +379,7 @@ namespace FastHotKeyForWPF
         }
         private void RemoveExistRegisterByHandler(HotKeyEventHandler handler)
         {
-            List<int> target = new List<int>();
+            List<int> target = [];
             foreach (RegisterInfo info in RegisterList.RegisterList)
             {
                 if (info.Handler == handler)
