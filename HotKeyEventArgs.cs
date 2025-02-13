@@ -1,27 +1,36 @@
-﻿using FastHotKeyForWPF;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-/// <summary>
-/// 热键的处理函数
-/// </summary>
-public delegate void HotKeyEventHandler(object sender, HotKeyEventArgs e);
-
-namespace FastHotKeyForWPF
+﻿namespace FastHotKeyForWPF
 {
-    /// <summary>
-    /// 热键触发过程中的信息传递
-    /// </summary>
-    public class HotKeyEventArgs : EventArgs
-    {
-        public HotKeyEventArgs() { }
+    public delegate void HotKeyEventHandler(object? sender, HotKeyEventArgs e);
 
-        /// <summary>
-        /// 热键信息
-        /// </summary>
-        public RegisterInfo RegisterInfo { get; set; } = new RegisterInfo();
+    public class HotKeyEventArgs(uint modifiers, uint triggers) : EventArgs
+    {
+        public uint Modifiers => modifiers;
+        public uint Triggers => triggers;
+
+        public ICollection<ModifierKeys> GetModifierKeys()
+        {
+            List<ModifierKeys> keys = [];
+            foreach (ModifierKeys flag in Enum.GetValues(typeof(ModifierKeys)))
+            {
+                if ((Modifiers & (uint)flag) == (uint)flag && (uint)flag != 0x0000)
+                {
+                    keys.Add(flag);
+                }
+            }
+            return keys;
+        }
+
+        public ICollection<TriggerKeys> GetTriggerKeys()
+        {
+            List<TriggerKeys> keys = [];
+            foreach (TriggerKeys flag in Enum.GetValues(typeof(TriggerKeys)))
+            {
+                if ((Triggers & (uint)flag) == (uint)flag && (uint)flag != 0x0000)
+                {
+                    keys.Add(flag);
+                }
+            }
+            return keys;
+        }
     }
 }

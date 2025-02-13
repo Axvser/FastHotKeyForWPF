@@ -1,264 +1,221 @@
-﻿using System.Reflection.Metadata;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Interop;
 
 namespace FastHotKeyForWPF
 {
-    /// <summary>
-    /// 全局热键
-    /// </summary>
-    public class GlobalHotKey
+    public enum ModifierKeys : uint
     {
-        private static GlobalHotKey? Instance;
+        Alt = 0x0001,
+        Ctrl = 0x0002,
+        Shift = 0x0004,
+        Win = 0x0008,
+        None = 0x0000
+    }
 
-        private GlobalHotKey() { }
+    public enum TriggerKeys : uint
+    {
+        LeftButton = 0x01,
+        RightButton = 0x02,
+        Cancel = 0x03,
+        MiddleButton = 0x04,
+        XButton1 = 0x05,
+        XButton2 = 0x06,
+        Back = 0x08,
+        Tab = 0x09,
+        Clear = 0x0C,
+        Enter = 0x0D,
+        Shift = 0x10,
+        Ctrl = 0x11,
+        Alt = 0x12,
+        Pause = 0x13,
+        CapsLock = 0x14,
+        Kana = 0x15,
+        Hangul = 0x15,
+        Junja = 0x17,
+        Final = 0x18,
+        Hanja = 0x19,
+        Kanji = 0x19,
+        Escape = 0x1B,
+        Convert = 0x1C,
+        NonConvert = 0x1D,
+        Accept = 0x1E,
+        ModeChange = 0x1F,
+        Space = 0x20,
+        PageUp = 0x21,
+        PageDown = 0x22,
+        End = 0x23,
+        Home = 0x24,
+        LeftArrow = 0x25,
+        UpArrow = 0x26,
+        RightArrow = 0x27,
+        DownArrow = 0x28,
+        Select = 0x29,
+        Print = 0x2A,
+        Execute = 0x2B,
+        PrintScreen = 0x2C,
+        Insert = 0x2D,
+        Delete = 0x2E,
+        Help = 0x2F,
+        D0 = 0x30,
+        D1 = 0x31,
+        D2 = 0x32,
+        D3 = 0x33,
+        D4 = 0x34,
+        D5 = 0x35,
+        D6 = 0x36,
+        D7 = 0x37,
+        D8 = 0x38,
+        D9 = 0x39,
+        A = 0x41,
+        B = 0x42,
+        C = 0x43,
+        D = 0x44,
+        E = 0x45,
+        F = 0x46,
+        G = 0x47,
+        H = 0x48,
+        I = 0x49,
+        J = 0x4A,
+        K = 0x4B,
+        L = 0x4C,
+        M = 0x4D,
+        N = 0x4E,
+        O = 0x4F,
+        P = 0x50,
+        Q = 0x51,
+        R = 0x52,
+        S = 0x53,
+        T = 0x54,
+        U = 0x55,
+        V = 0x56,
+        W = 0x57,
+        X = 0x58,
+        Y = 0x59,
+        Z = 0x5A,
+        LeftWindows = 0x5B,
+        RightWindows = 0x5C,
+        Apps = 0x5D,
+        Sleep = 0x5F,
+        NumPad0 = 0x60,
+        NumPad1 = 0x61,
+        NumPad2 = 0x62,
+        NumPad3 = 0x63,
+        NumPad4 = 0x64,
+        NumPad5 = 0x65,
+        NumPad6 = 0x66,
+        NumPad7 = 0x67,
+        NumPad8 = 0x68,
+        NumPad9 = 0x69,
+        Multiply = 0x6A,
+        Add = 0x6B,
+        Separator = 0x6C,
+        Subtract = 0x6D,
+        Decimal = 0x6E,
+        Divide = 0x6F,
+        F1 = 0x70,
+        F2 = 0x71,
+        F3 = 0x72,
+        F4 = 0x73,
+        F5 = 0x74,
+        F6 = 0x75,
+        F7 = 0x76,
+        F8 = 0x77,
+        F9 = 0x78,
+        F10 = 0x79,
+        F11 = 0x7A,
+        F12 = 0x7B,
+        F13 = 0x7C,
+        F14 = 0x7D,
+        F15 = 0x7E,
+        F16 = 0x7F,
+        F17 = 0x80,
+        F18 = 0x81,
+        F19 = 0x82,
+        F20 = 0x83,
+        F21 = 0x84,
+        F22 = 0x85,
+        F23 = 0x86,
+        F24 = 0x87,
+        NumLock = 0x90,
+        ScrollLock = 0x91,
+        LeftShift = 0xA0,
+        RightShift = 0xA1,
+        LeftCtrl = 0xA2,
+        RightCtrl = 0xA3,
+        LeftAlt = 0xA4,
+        RightAlt = 0xA5,
+        BrowserBack = 0xA6,
+        BrowserForward = 0xA7,
+        BrowserRefresh = 0xA8,
+        BrowserStop = 0xA9,
+        BrowserSearch = 0xAA,
+        BrowserFavorites = 0xAB,
+        BrowserHome = 0xAC,
+        VolumeMute = 0xAD,
+        VolumeDown = 0xAE,
+        VolumeUp = 0xAF,
+        MediaNextTrack = 0xB0,
+        MediaPreviousTrack = 0xB1,
+        MediaStop = 0xB2,
+        MediaPlayPause = 0xB3,
+        LaunchMail = 0xB4,
+        LaunchMediaSelect = 0xB5,
+        LaunchApp1 = 0xB6,
+        LaunchApp2 = 0xB7,
+        Semicolon = 0xBA,
+        Plus = 0xBB,
+        Comma = 0xBC,
+        Minus = 0xBD,
+        Period = 0xBE,
+        Slash = 0xBF,
+        GraveAccentAndTilde = 0xC0,
+        OpenBracket = 0xDB,
+        Backslash = 0xDC,
+        CloseBracket = 0xDD,
+        Quote = 0xDE,
+        OEM_102 = 0xE2,
+        ProcessKey = 0xE5,
+        Packet = 0xE7,
+        Attention = 0xF6,
+        CrSel = 0xF7,
+        ExSel = 0xF8,
+        EraseEOF = 0xF9,
+        Play = 0xFA,
+        Zoom = 0xFB,
+        NoName = 0xFC,
+        PA1 = 0xFD,
+        OEM_Clear = 0xFE,
+        None = 0x0000
+    }
 
-        internal const int WM_HOTKEY = 0x0312;
-
+    public static class GlobalHotKey
+    {
         [DllImport("user32.dll")]
         internal static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
-
         [DllImport("user32.dll")]
         internal static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
-        /// <summary>
-        /// 是否实时更新热键处理函数返回的值
-        /// </summary>
-        public static bool IsUpdate { get; set; } = true;
+        private static IntPtr WindowhWnd = IntPtr.Zero;
+        private static HwndSource? source;
+        private static bool IsAwaked = false;
 
-        /// <summary>
-        /// 第一个热键注册的ID号
-        /// </summary>
-        public static int HOTKEY_ID { get; set; } = 2004;
+        private static Dictionary<int, IHotKeyComponent> Components { get; set; } = [];
+        private static Queue<Tuple<uint, uint, ICollection<HotKeyEventHandler>>> WaitToBeRegistered { get; set; } = [];
 
-        /// <summary>
-        /// 注册信息表
-        /// </summary>
-        public static RegisterCollection Registers
-        {
-            get
-            {
-                if (Instance != null)
-                {
-                    return Instance.RegisterList;
-                }
-                return new RegisterCollection();
-            }
-        }
-
-        /// <summary>
-        /// 保护名单
-        /// </summary>
-        public static List<Tuple<uint, uint>>? ProtectedHotKeys
-        {
-            get
-            {
-                if (Instance == null)
-                {
-                    return null;
-                }
-                else
-                {
-                    return Instance.ProtectList;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 激活热键功能
-        /// </summary>
-        public static void Awake()
-        {
-            if (Instance == null)
-            {
-                Window mainWindow = Application.Current.MainWindow;
-                if (mainWindow != null)
-                {
-                    Instance = new GlobalHotKey
-                    {
-                        WindowhWnd = new WindowInteropHelper(mainWindow).Handle
-                    };
-                    Instance.Install();
-
-                    for (int i = 0; i < BoxPool.ModelItems.Count; i++)
-                    {
-                        BoxPool.ModelItems[i].UpdateText();
-                        BoxPool.ModelItems[i].UpdateHotKey();
-                    }
-                }
-                else
-                {
-                    throw new Exception("窗口句柄不存在 ！");
-                }
-            }
-            else
-            {
-                throw new Exception("重复激活 GlobalHotKey ！");
-            }
-        }
-        /// <summary>
-        /// 销毁所有热键
-        /// </summary>
-        public static void Destroy()
-        {
-            if (Instance != null)
-            {
-                Instance.UnInstall();
-                Instance.RemoveAllHotKeys();
-                Instance = null;
-            }
-        }
-
-        /// <summary>
-        /// 添加一个热键
-        /// </summary>
-        /// <returns>元组，Item1表示是否成功注册热键，Item2表示注册ID</returns>
-        public static int Add(object modelKeys, object normalKey, HotKeyEventHandler handler)
-        {
-            if (Instance != null)
-            {
-                return Instance.AddHotKey(KeyHelper.ValueToUint(modelKeys), KeyHelper.ValueToUint(normalKey), handler);
-            }
-            return -1;
-        }
-
-        /// <summary>
-        /// 修改热键的处理函数
-        /// </summary>
-        public static void EditHandler(object modelKeys, object normalKey, HotKeyEventHandler? handler)
-        {
-            Instance?.EditExistHandler(KeyHelper.ValueToUint(modelKeys), KeyHelper.ValueToUint(normalKey), handler);
-        }
-        /// <summary>
-        /// 修改热键的热键组合
-        /// </summary>
-        public static void EditKeys(HotKeyEventHandler handler, object modelKeys, object normalKey)
-        {
-            Instance?.EditExistKeys(handler, KeyHelper.ValueToUint(modelKeys), KeyHelper.ValueToUint(normalKey));
-        }
-
-        /// <summary>
-        /// 清空热键，但不卸载钩子
-        /// </summary>
-        public static void Clear()
-        {
-            Instance?.RemoveAllHotKeys();
-        }
-        /// <summary>
-        /// 删除指定编号的热键
-        /// </summary>
-        public static void DeleteById(int id)
-        {
-            Instance?.RemoveExistRegisterByID(id);
-        }
-        /// <summary>
-        /// 清除与指定函数关联的热键
-        /// </summary>
-        public static void DeleteByHandler(HotKeyEventHandler handler)
-        {
-            Instance?.RemoveExistRegisterByHandler(handler);
-        }
-        /// <summary>
-        /// 清除与指定热键组合关联的热键
-        /// </summary>
-        public static void DeleteByKeys(object modelKeys, object normalKey)
-        {
-            Instance?.RemoveExistRegisterByKeys(KeyHelper.ValueToUint(modelKeys), KeyHelper.ValueToUint(normalKey));
-        }
-
-        /// <summary>
-        /// 依据热键组合，增加受保护的热键
-        /// </summary>
-        public static void ProtectHotKeyByKeys(object modelKeys, object normalKey)
-        {
-            Instance?.AddProtectedHotKey(KeyHelper.ValueToUint(modelKeys), KeyHelper.ValueToUint(normalKey));
-        }
-        /// <summary>
-        /// 依据注册ID，增加受保护的热键
-        /// </summary>
-        /// <param name="id"></param>
-        public static void ProtectHotKeyById(int id)
-        {
-            Instance?.AddProtectedHotKey(id);
-        }
-
-        /// <summary>
-        /// 解除热键的保护态
-        /// </summary>
-        public static void UnProtectHotKeyByKeys(object modelKeys, object normalKey)
-        {
-            Instance?.RemoveProtectedHotKey(KeyHelper.ValueToUint(modelKeys), KeyHelper.ValueToUint(normalKey));
-        }
-        /// <summary>
-        /// 解除热键的保护态
-        /// </summary>
-        public static void UnProtectHotKeyById(int id)
-        {
-            Instance?.RemoveProtectedHotKey(id);
-        }
-
-        /// <summary>
-        /// 检查热键是否处于保护态
-        /// </summary>
-        public static bool IsHotKeyProtected(object modelKeys, object normalKey)
-        {
-            bool result = false;
-
-            if (Instance != null)
-            {
-                result = Instance.CheckInProtectList(KeyHelper.ValueToUint(modelKeys), KeyHelper.ValueToUint(normalKey));
-            }
-
-            return result;
-        }
-        /// <summary>
-        /// 检查热键是否处于保护态
-        /// </summary>
-        public static bool IsHotKeyProtected(int id)
-        {
-            bool result = false;
-
-            if (Instance != null)
-            {
-                result = Instance.CheckInProtectList(id);
-            }
-
-            return result;
-        }
-
-
-        #region 动态资源
-
-        IntPtr WindowhWnd;
-
-        private int Counter = 0;
-
-        private Dictionary<int, HotKeyEventHandler?> Handlers { get; set; } = [];
-
-        private RegisterCollection RegisterList { get; set; } = new();
-
-        private List<Tuple<uint, uint>> ProtectList { get; set; } = [];
-
-        private IntPtr WhileKeyInvoked(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        internal const int WM_HOTKEY = 0x0312;
+        private static IntPtr WhileKeyInvoked(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             switch (msg)
             {
                 case WM_HOTKEY:
                     int id = wParam.ToInt32();
-                    try
+
+                    if (Components.TryGetValue(id, out var component))
                     {
-                        HotKeyEventArgs Args = new()
-                        {
-                            RegisterInfo = RegisterList[id]
-                        };
-                        Handlers[id]?.Invoke(this, Args);
+                        component.Invoke();
                     }
-                    catch (KeyNotFoundException)
-                    {
-                        throw new Exception($"Handlers[{id}] Not Be Found !");
-                    }
+
                     handled = true;
                     break;
 
@@ -266,210 +223,98 @@ namespace FastHotKeyForWPF
             return IntPtr.Zero;
         }
 
-        private void Install()
+        public static void Awake()
         {
-            HwndSource source = HwndSource.FromHwnd(WindowhWnd);
-            source.AddHook(new HwndSourceHook(WhileKeyInvoked));
-        }
+            if (IsAwaked) return;
 
-        private void UnInstall()
-        {
-            HwndSource source = HwndSource.FromHwnd(WindowhWnd);
-            source.RemoveHook(new HwndSourceHook(WhileKeyInvoked));
-        }
-
-        private int AddHotKey(uint mode, uint key, HotKeyEventHandler handler)
-        {
-            if (CheckInProtectList(mode, key)) { return -1; }
-            int id = HOTKEY_ID + Counter;
-            RemoveExistRegisterByID(id);
-            RemoveExistRegisterByKeys(mode, key);
-            bool result;
-            result = RegisterHotKey(WindowhWnd, id, mode, key);
-            if (result)
+            WindowhWnd = new WindowInteropHelper(Application.Current.MainWindow).Handle;
+            if (WindowhWnd != IntPtr.Zero)
             {
-                Handlers.Add(id, handler);
-                RegisterInfo info = new(id, mode, key, handler);
-                RegisterList.Add(info);
-                Counter++;
-                return info.RegisterID;
-            }
-            return -1;
-        }
-
-
-        private void EditExistKeys(HotKeyEventHandler handler, uint mode, uint key)
-        {
-            if (CheckInProtectList(mode, key)) { return; }
-
-            foreach (RegisterInfo info in RegisterList.RegisterList)
-            {
-                if (info.Handler == handler)
+                source = HwndSource.FromHwnd(WindowhWnd);
+                source.AddHook(new HwndSourceHook(WhileKeyInvoked));
+                IsAwaked = true;
+                while (WaitToBeRegistered.Count > 0)
                 {
-                    RemoveExistRegisterByID(info.RegisterID);
-                    RegisterHotKey(WindowhWnd, info.RegisterID, mode, (uint)key);
-                    RegisterInfo result = new(info.RegisterID, mode, key, handler);
-                    RegisterList.Add(result);
-                    Handlers.Add(result.RegisterID, handler);
-                    break;
-                }
-            }
-        }
-
-        private void EditExistHandler(uint mode, uint key, HotKeyEventHandler? handler)
-        {
-            if (CheckInProtectList(mode, key)) { return; }
-
-            foreach (RegisterInfo info in RegisterList.RegisterList)
-            {
-                if (info.ModelKey == mode && info.NormalKey == key)
-                {
-                    RemoveExistRegisterByID(info.RegisterID);
-                    RegisterHotKey(WindowhWnd, info.RegisterID, mode, (uint)key);
-                    RegisterInfo result = new(info.RegisterID, mode, key, handler);
-                    RegisterList.Add(result);
-                    Handlers.Add(result.RegisterID, handler);
-                    break;
-                }
-            }
-        }
-
-        private void RemoveAllHotKeys()
-        {
-            while (Counter >= 2004)
-            {
-                int id = HOTKEY_ID + Counter;
-                RemoveExistRegisterByID(id);
-                Counter--;
-            }
-        }
-
-        private void RemoveExistRegisterByID(int id)
-        {
-            if (CheckInProtectList(id)) { return; }
-
-            if (UnregisterHotKey(WindowhWnd, id))
-            {
-                Handlers.Remove(id); ;
-
-                RegisterInfo? target = null;
-                foreach (RegisterInfo registerInfo in RegisterList.RegisterList)
-                {
-                    if (registerInfo.RegisterID == id)
+                    if (WaitToBeRegistered.TryDequeue(out var meta))
                     {
-                        target = registerInfo;
-                        break;
+                        Register(meta.Item1, meta.Item2, meta.Item3);
                     }
                 }
-                if (target != null) RegisterList.Remove(target.RegisterID);
             }
         }
-        private int RemoveExistRegisterByKeys(uint mode, uint key)
+        public static void Dispose()
         {
-            if (CheckInProtectList(mode, key)) { return -1; }
-            foreach (RegisterInfo info in RegisterList.RegisterList)
+            if (!IsAwaked) return;
+
+            foreach (var component in Components)
             {
-                if (info.ModelKey == mode && info.NormalKey == key)
+                UnregisterHotKey(WindowhWnd, component.Key);
+            }
+            source?.RemoveHook(new HwndSourceHook(WhileKeyInvoked));
+            source?.Dispose();
+            IsAwaked = false;
+        }
+        public static int Register(uint modifiers, uint triggers, ICollection<HotKeyEventHandler> handlers)
+        {
+            Awake();
+
+            if (IsAwaked)
+            {
+                var id = 2025 + HashCode.Combine(modifiers, triggers);
+                Unregister(modifiers, triggers);
+                var reg = RegisterHotKey(WindowhWnd, id, modifiers, triggers);
+
+                if (reg)
                 {
-                    RemoveExistRegisterByID(info.RegisterID);
-                    return info.RegisterID;
+                    var component = new InvisibleHotkeyComponent(modifiers, triggers);
+                    foreach (var handler in handlers)
+                    {
+                        component.Handler += handler;
+                    }
+                    Components.Add(id, component);
                 }
+
+                return reg ? id : -1;
+            }
+            else
+            {
+                WaitToBeRegistered.Enqueue(Tuple.Create(modifiers, triggers, handlers));
+
+                return 0;
+            }
+        }
+        public static bool Unregister(uint modifiers, uint triggers)
+        {
+            var id = 2025 + HashCode.Combine(modifiers, triggers);
+            var ureg = UnregisterHotKey(WindowhWnd, id);
+            if (Components.TryGetValue(id, out var component))
+            {
+                Components.Remove(id);
+                component.Covered();
+            }
+            return ureg;
+        }
+
+        public static int Register(IHotKeyComponent component)
+        {
+            Awake();
+            var id = 2025 + HashCode.Combine(component.ModifierKeys, component.TriggerKeys);
+            UnregisterHotKey(WindowhWnd, id);
+            Components.Remove(id);
+            if (RegisterHotKey(WindowhWnd, id, component.ModifierKeys, component.TriggerKeys))
+            {
+                Components.Add(id, component);
+                return id;
             }
             return -1;
         }
-        private void RemoveExistRegisterByHandler(HotKeyEventHandler handler)
+        public static int Register(ModifierKeys modifierKeys, TriggerKeys triggerKeys, ICollection<HotKeyEventHandler> handlers)
         {
-            List<int> target = [];
-            foreach (RegisterInfo info in RegisterList.RegisterList)
-            {
-                if (info.Handler == handler)
-                {
-                    target.Add(info.RegisterID);
-                }
-            }
-            foreach (int id in target)
-            {
-                if (!CheckInProtectList(id)) { RemoveExistRegisterByID(id); }
-            }
+            return Register((uint)modifierKeys, (uint)triggerKeys, handlers);
         }
-
-        private void AddProtectedHotKey(uint modelKey, uint normalKey)
+        public static bool Unregister(ModifierKeys modifierKeys, TriggerKeys triggerKeys)
         {
-            foreach (var item in ProtectList)
-            {
-                if (item.Item1 == modelKey && item.Item2 == normalKey)
-                {
-                    return;
-                }
-            }
-            ProtectList.Add(Tuple.Create(modelKey, normalKey));
+            return Unregister((uint)modifierKeys, (uint)triggerKeys);
         }
-        private void AddProtectedHotKey(int id)
-        {
-            foreach (RegisterInfo info in RegisterList.RegisterList)
-            {
-                if (info.RegisterID == id)
-                {
-                    AddProtectedHotKey(info.ModelKey, info.NormalKey);
-                    return;
-                }
-            }
-        }
-
-        private void RemoveProtectedHotKey(uint modelKey, uint normalKey)
-        {
-            foreach (var item in ProtectList)
-            {
-                if (item.Item1 == modelKey && item.Item2 == normalKey)
-                {
-                    ProtectList.Remove(item);
-                    return;
-                }
-            }
-        }
-        private void RemoveProtectedHotKey(int id)
-        {
-            foreach (RegisterInfo info in RegisterList.RegisterList)
-            {
-                if (info.RegisterID == id)
-                {
-                    RemoveProtectedHotKey(info.ModelKey, info.NormalKey);
-                    return;
-                }
-            }
-        }
-
-        private bool CheckInProtectList(uint modelKey, uint normalKey)
-        {
-            bool result = false;
-
-            foreach (var item in ProtectList)
-            {
-                if (item.Item1 == modelKey && item.Item2 == normalKey)
-                {
-                    result = true;
-                    break;
-                }
-            }
-
-            return result;
-        }
-        private bool CheckInProtectList(int id)
-        {
-            bool result = false;
-
-            foreach (RegisterInfo info in RegisterList.RegisterList)
-            {
-                if (info.RegisterID == id)
-                {
-                    result = CheckInProtectList(info.ModelKey, info.NormalKey);
-                    break;
-                }
-            }
-
-            return result;
-        }
-
-        #endregion
     }
 }
