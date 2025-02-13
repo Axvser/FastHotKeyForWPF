@@ -9,7 +9,7 @@ Get →
 
 Versions →
 
-3.0.0 `LTS`
+2.9.0 `preview for 3.0.0`
 
 ---
 
@@ -34,7 +34,8 @@ namespace WpfApp4
         {
             base.OnSourceInitialized(e);
 
-            // Just make sure to register later than the window completes initialization
+            // Here you get the window handle, and once you're done, you can use the hotkey registration, modification, and other functions provided by the library
+            GlobalHotKey.Awake();
 
             // Add HotKey
             GlobalHotKey.Register(ModifierKeys.Ctrl | ModifierKeys.Alt, // modifiers
@@ -70,8 +71,11 @@ namespace WpfApp4
             MessageBox.Show($"{e.Modifiers}");
             // Retrieves the value of the triggered hotkey
 
-            MessageBox.Show($"{e.GetTriggerKeys().Contains(TriggerKeys.F1)}");
-            // The collection returned by this method simply represents what enums might contain,
+            MessageBox.Show($"{e.GetModifierKeys().Count}");
+            // Since there are only five ModifierKeys, this method usually parses accurately
+
+            MessageBox.Show($"{e.GetTriggerKeys().Count}");
+            // Imprecise, but the original key is included in the set
         }
     }
 }
@@ -121,31 +125,96 @@ namespace WpfApp4
         {
             // When a hotkey is registered, if the key combination is repeated with the control, the hotkey effect of the current control will be overwritten
         }
+        partial void OnHotKeyUpdated()
+        {
+            
+        }
     }
 }
 
 ```
 
-# What the source generator specifically produces
+---
 
-- ### 1. Dependency Properties 
+# Ⅲ A comprehensive example defining a custom user control to support user-defined HotKey.
 
-`Changing their value will automatically register or modify the hotkey`
+- ## 1. Use Source Generator
 
-| Property Name | Type   | Description                     |
-|---------------|--------|---------------------------------|
-| ModifierKeys  | uint   | Gets or sets the modifier keys. |
-| TriggerKeys   | uint   | Gets or sets the trigger keys.  |
+```csharp
+using FastHotKeyForWPF;
+using System.Windows.Controls;
 
-- ### 2. Events
+namespace WpfApp4
+{
+    [HotKeyComponent]
+    public partial class HotKeyBox : UserControl
+    {
+        public HotKeyBox()
+        {
+            InitializeComponent();
+        }
 
-| Event Name | Type               | Description                                |
-|------------|--------------------|--------------------------------------------|
-| Handler    | HotKeyEventHandler | Event that gets raised when the hotkey is invoked. |
+        private void TextBox_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (sender is TextBox box)
+            {
+                box.Focus();
+            }
+        }
 
-- ### 3. Methods
+        private void TextBox_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            System.Windows.Input.Keyboard.ClearFocus();
+        }
+    }
+}
 
-| Method Name | Parameters       | Return Type | Description                                                                 |
-|-------------|------------------|-------------|-----------------------------------------------------------------------------|
-| Invoke      | None             | void        | Invokes the event handlers associated with the hotkey.                    |
-| Covered     | None             | void        | When a hotkey is overwritten by another registration operation            |
+```
+
+- ## 2. Layout & Data Binding
+
+```xml
+<UserControl x:Class="WpfApp4.HotKeyBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WpfApp4"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Template>
+        <ControlTemplate>
+            <!-- [ OnHotKeyReceived ] is automatically generated -->
+            <TextBox KeyDown="OnHotKeyReceived"
+                     MouseEnter="TextBox_MouseEnter"
+                     MouseLeave="TextBox_MouseLeave"
+                     Text="{Binding Text, RelativeSource={RelativeSource AncestorType=local:HotKeyBox}}" 
+                     Foreground="{TemplateBinding Foreground}" 
+                     FontSize="{TemplateBinding FontSize}"
+                     IsReadOnly="True"/>
+        </ControlTemplate>
+    </UserControl.Template>
+</UserControl>
+
+```
+
+- ## 3. Use your custom control to build the interface for hot key settings.
+
+- ## 4. What the source generator specifically produces
+
+| Content Type | Name                  | Type                       | Description                                                                 |
+|--------------|-----------------------|----------------------------|-----------------------------------------------------------------------------|
+| Property     | ModifierKeys          | uint                       | Gets or sets the modifier keys for the hotkey combination.                |
+| Property     | TriggerKeys           | uint                       | Gets or sets the trigger keys for the hotkey combination.                 |
+| Property     | Text                  | string                     | Gets or sets the text representation of the hotkey displayed on the control.|
+| Event        | Handler               | HotKeyEventHandler         | The event handler called when the hotkey is triggered.                    |
+| Method       | Invoke                | void                       | Invokes the hotkey event handlers.                                        |
+| Method       | Covered               | void                       | Clears all hotkey information and resets the control state.               |
+| Method       | OnModifierKeysChanged | (uint oldKeys, uint newKeys) | Called when the ModifierKeys property changes.                            |
+| Method       | OnTriggerKeysChanged  | (uint oldKeys, uint newKeys) | Called when the TriggerKeys property changes.                             |
+| Method       | OnHotKeyInvoking      | void                       | Called within the Invoke method before invoking the hotkey event handlers.  |
+| Method       | OnHotKeyInvoked       | void                       | Called within the Invoke method after invoking the hotkey event handlers.   |
+| Method       | OnCovered             | void                       | Called within the Covered method after clearing the hotkey information.     |
+| Method       | OnHotKeyReceived      | (object sender, System.Windows.Input.KeyEventArgs e) | Handles key events to update hotkey information.                          |
+| Method       | UpdateValue           | void                       | Updates the values of the ModifierKeys, TriggerKeys, and Text properties. |
+| Method       | OnHotKeyUpdated       | void                       | Called within the UpdateValue method after updating the hotkey information. |

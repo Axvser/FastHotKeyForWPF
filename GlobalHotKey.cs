@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interop;
 
 namespace FastHotKeyForWPF
@@ -191,6 +192,155 @@ namespace FastHotKeyForWPF
 
     public static class GlobalHotKey
     {
+        public static readonly Dictionary<Key, ModifierKeys> KeyToModifierWinApiMapping = new()
+        {
+           { Key.LeftShift, ModifierKeys.Shift },
+           { Key.RightShift, ModifierKeys.Shift },
+           { Key.LeftCtrl, ModifierKeys.Ctrl },
+           { Key.RightCtrl, ModifierKeys.Ctrl },
+           { Key.LeftAlt, ModifierKeys.Alt },
+           { Key.RightAlt, ModifierKeys.Alt },
+           { Key.LWin, ModifierKeys.Win },
+           { Key.RWin, ModifierKeys.Win },
+        };
+
+        public static readonly Dictionary<Key, TriggerKeys> KeyToTriggerWinApiMapping = new()
+        {
+           { Key.Cancel, TriggerKeys.Cancel },
+           { Key.Back, TriggerKeys.Back },
+           { Key.Tab, TriggerKeys.Tab },
+           { Key.Clear, TriggerKeys.Clear },
+           { Key.Enter, TriggerKeys.Enter },
+           { Key.Pause, TriggerKeys.Pause },
+           { Key.CapsLock, TriggerKeys.CapsLock },
+           { Key.KanaMode, TriggerKeys.Kana },
+           { Key.JunjaMode, TriggerKeys.Junja },
+           { Key.FinalMode, TriggerKeys.Final },
+           { Key.HanjaMode, TriggerKeys.Hanja },
+           { Key.Escape, TriggerKeys.Escape },
+           { Key.ImeConvert, TriggerKeys.Convert },
+           { Key.ImeNonConvert, TriggerKeys.NonConvert },
+           { Key.ImeAccept, TriggerKeys.Accept },
+           { Key.ImeModeChange, TriggerKeys.ModeChange },
+           { Key.Space, TriggerKeys.Space },
+           { Key.PageUp, TriggerKeys.PageUp },
+           { Key.PageDown, TriggerKeys.PageDown },
+           { Key.End, TriggerKeys.End },
+           { Key.Home, TriggerKeys.Home },
+           { Key.Left, TriggerKeys.LeftArrow },
+           { Key.Up, TriggerKeys.UpArrow },
+           { Key.Right, TriggerKeys.RightArrow },
+           { Key.Down, TriggerKeys.DownArrow },
+           { Key.Select, TriggerKeys.Select },
+           { Key.Print, TriggerKeys.Print },
+           { Key.Execute, TriggerKeys.Execute },
+           { Key.PrintScreen, TriggerKeys.PrintScreen },
+           { Key.Insert, TriggerKeys.Insert },
+           { Key.Delete, TriggerKeys.Delete },
+           { Key.Help, TriggerKeys.Help },
+           { Key.D0, TriggerKeys.D0 },
+           { Key.D1, TriggerKeys.D1 },
+           { Key.D2, TriggerKeys.D2 },
+           { Key.D3, TriggerKeys.D3 },
+           { Key.D4, TriggerKeys.D4 },
+           { Key.D5, TriggerKeys.D5 },
+           { Key.D6, TriggerKeys.D6 },
+           { Key.D7, TriggerKeys.D7 },
+           { Key.D8, TriggerKeys.D8 },
+           { Key.D9, TriggerKeys.D9 },
+           { Key.A, TriggerKeys.A },
+           { Key.B, TriggerKeys.B },
+           { Key.C, TriggerKeys.C },
+           { Key.D, TriggerKeys.D },
+           { Key.E, TriggerKeys.E },
+           { Key.F, TriggerKeys.F },
+           { Key.G, TriggerKeys.G },
+           { Key.H, TriggerKeys.H },
+           { Key.I, TriggerKeys.I },
+           { Key.J, TriggerKeys.J },
+           { Key.K, TriggerKeys.K },
+           { Key.L, TriggerKeys.L },
+           { Key.M, TriggerKeys.M },
+           { Key.N, TriggerKeys.N },
+           { Key.O, TriggerKeys.O },
+           { Key.P, TriggerKeys.P },
+           { Key.Q, TriggerKeys.Q },
+           { Key.R, TriggerKeys.R },
+           { Key.S, TriggerKeys.S },
+           { Key.T, TriggerKeys.T },
+           { Key.U, TriggerKeys.U },
+           { Key.V, TriggerKeys.V },
+           { Key.W, TriggerKeys.W },
+           { Key.X, TriggerKeys.X },
+           { Key.Y, TriggerKeys.Y },
+           { Key.Z, TriggerKeys.Z },
+           { Key.Apps, TriggerKeys.Apps },
+           { Key.Sleep, TriggerKeys.Sleep },
+           { Key.NumPad0, TriggerKeys.NumPad0 },
+           { Key.NumPad1, TriggerKeys.NumPad1 },
+           { Key.NumPad2, TriggerKeys.NumPad2 },
+           { Key.NumPad3, TriggerKeys.NumPad3 },
+           { Key.NumPad4, TriggerKeys.NumPad4 },
+           { Key.NumPad5, TriggerKeys.NumPad5 },
+           { Key.NumPad6, TriggerKeys.NumPad6 },
+           { Key.NumPad7, TriggerKeys.NumPad7 },
+           { Key.NumPad8, TriggerKeys.NumPad8 },
+           { Key.NumPad9, TriggerKeys.NumPad9 },
+           { Key.Multiply, TriggerKeys.Multiply },
+           { Key.Add, TriggerKeys.Add },
+           { Key.Subtract, TriggerKeys.Subtract },
+           { Key.Decimal, TriggerKeys.Decimal },
+           { Key.Divide, TriggerKeys.Divide },
+           { Key.F1, TriggerKeys.F1 },
+           { Key.F2, TriggerKeys.F2 },
+           { Key.F3, TriggerKeys.F3 },
+           { Key.F4, TriggerKeys.F4 },
+           { Key.F5, TriggerKeys.F5 },
+           { Key.F6, TriggerKeys.F6 },
+           { Key.F7, TriggerKeys.F7 },
+           { Key.F8, TriggerKeys.F8 },
+           { Key.F9, TriggerKeys.F9 },
+           { Key.F10, TriggerKeys.F10 },
+           { Key.F11, TriggerKeys.F11 },
+           { Key.F12, TriggerKeys.F12 },
+           { Key.F13, TriggerKeys.F13 },
+           { Key.F14, TriggerKeys.F14 },
+           { Key.F15, TriggerKeys.F15 },
+           { Key.F16, TriggerKeys.F16 },
+           { Key.F17, TriggerKeys.F17 },
+           { Key.F18, TriggerKeys.F18 },
+           { Key.F19, TriggerKeys.F19 },
+           { Key.F20, TriggerKeys.F20 },
+           { Key.F21, TriggerKeys.F21 },
+           { Key.F22, TriggerKeys.F22 },
+           { Key.F23, TriggerKeys.F23 },
+           { Key.F24, TriggerKeys.F24 },
+           { Key.NumLock, TriggerKeys.NumLock },
+           { Key.Scroll, TriggerKeys.ScrollLock },
+           { Key.OemSemicolon, TriggerKeys.Semicolon },
+           { Key.OemPlus, TriggerKeys.Plus },
+           { Key.OemComma, TriggerKeys.Comma },
+           { Key.OemMinus, TriggerKeys.Minus },
+           { Key.OemPeriod, TriggerKeys.Period },
+           { Key.OemQuestion, TriggerKeys.Slash },
+           { Key.OemTilde, TriggerKeys.GraveAccentAndTilde },
+           { Key.OemOpenBrackets, TriggerKeys.OpenBracket },
+           { Key.OemPipe, TriggerKeys.Backslash },
+           { Key.OemCloseBrackets, TriggerKeys.CloseBracket },
+           { Key.OemQuotes, TriggerKeys.Quote },
+           { Key.OemBackslash, TriggerKeys.OEM_102 },
+           { Key.ImeProcessed, TriggerKeys.ProcessKey },
+           { Key.OemAttn, TriggerKeys.Attention },
+           { Key.CrSel, TriggerKeys.CrSel },
+           { Key.ExSel, TriggerKeys.ExSel },
+           { Key.EraseEof, TriggerKeys.EraseEOF },
+           { Key.Play, TriggerKeys.Play },
+           { Key.Zoom, TriggerKeys.Zoom },
+           { Key.None, TriggerKeys.None },
+           { Key.Pa1, TriggerKeys.PA1 },
+           { Key.OemClear, TriggerKeys.OEM_Clear }
+        };
+
         [DllImport("user32.dll")]
         internal static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
         [DllImport("user32.dll")]
@@ -198,10 +348,11 @@ namespace FastHotKeyForWPF
 
         private static IntPtr WindowhWnd = IntPtr.Zero;
         private static HwndSource? source;
-        private static bool IsAwaked = false;
+        public static bool IsAwaked { get; private set; } = false;
 
         private static Dictionary<int, IHotKeyComponent> Components { get; set; } = [];
-        private static Queue<Tuple<uint, uint, ICollection<HotKeyEventHandler>>> WaitToBeRegistered { get; set; } = [];
+        private static Queue<Tuple<uint, uint, ICollection<HotKeyEventHandler>>> WaitToBeRegisteredInvisible { get; set; } = [];
+        private static Queue<Tuple<uint, uint, IHotKeyComponent>> WaitToBeRegisteredVisual { get; set; } = [];
 
         internal const int WM_HOTKEY = 0x0312;
         private static IntPtr WhileKeyInvoked(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -233,11 +384,27 @@ namespace FastHotKeyForWPF
                 source = HwndSource.FromHwnd(WindowhWnd);
                 source.AddHook(new HwndSourceHook(WhileKeyInvoked));
                 IsAwaked = true;
-                while (WaitToBeRegistered.Count > 0)
+                while (WaitToBeRegisteredInvisible.Count > 0)
                 {
-                    if (WaitToBeRegistered.TryDequeue(out var meta))
+                    if (WaitToBeRegisteredInvisible.TryDequeue(out var meta))
                     {
                         Register(meta.Item1, meta.Item2, meta.Item3);
+                    }
+                }
+                while (WaitToBeRegisteredVisual.Count > 0)
+                {
+                    if (WaitToBeRegisteredVisual.TryDequeue(out var meta))
+                    {
+                        var hash = HashCode.Combine(meta.Item1, meta.Item2);
+                        RegisterHotKey(WindowhWnd, hash, meta.Item1, meta.Item2);
+                        if (Components.TryGetValue(hash, out _))
+                        {
+                            Components[hash] = meta.Item3;
+                        }
+                        else
+                        {
+                            Components.Add(hash, meta.Item3);
+                        }
                     }
                 }
             }
@@ -250,13 +417,43 @@ namespace FastHotKeyForWPF
             {
                 UnregisterHotKey(WindowhWnd, component.Key);
             }
+            Components.Clear();
             source?.RemoveHook(new HwndSourceHook(WhileKeyInvoked));
             source?.Dispose();
             IsAwaked = false;
         }
+        public static int Register(IHotKeyComponent component)
+        {
+            if (component.TriggerKeys == 0x0000 || component.ModifierKeys == 0x0000) return -1;
+
+            if (IsAwaked)
+            {
+                var id = 2025 + HashCode.Combine(component.ModifierKeys, component.TriggerKeys);
+                UnregisterHotKey(WindowhWnd, id);
+                if (Components.TryGetValue(id, out var same))
+                {
+                    Components.Remove(id);
+                    same.Covered();
+                }
+                if (RegisterHotKey(WindowhWnd, id, component.ModifierKeys, component.TriggerKeys))
+                {
+                    Components.Add(id, component);
+                    return id;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                WaitToBeRegisteredVisual.Enqueue(Tuple.Create(component.ModifierKeys, component.TriggerKeys, component));
+                return 0;
+            }
+        }
         public static int Register(uint modifiers, uint triggers, ICollection<HotKeyEventHandler> handlers)
         {
-            Awake();
+            if (modifiers == 0x0000 || triggers == 0x0000) return -1;
 
             if (IsAwaked)
             {
@@ -278,8 +475,7 @@ namespace FastHotKeyForWPF
             }
             else
             {
-                WaitToBeRegistered.Enqueue(Tuple.Create(modifiers, triggers, handlers));
-
+                WaitToBeRegisteredInvisible.Enqueue(Tuple.Create(modifiers, triggers, handlers));
                 return 0;
             }
         }
@@ -290,24 +486,10 @@ namespace FastHotKeyForWPF
             if (Components.TryGetValue(id, out var component))
             {
                 Components.Remove(id);
-                component.Covered();
             }
             return ureg;
         }
 
-        public static int Register(IHotKeyComponent component)
-        {
-            Awake();
-            var id = 2025 + HashCode.Combine(component.ModifierKeys, component.TriggerKeys);
-            UnregisterHotKey(WindowhWnd, id);
-            Components.Remove(id);
-            if (RegisterHotKey(WindowhWnd, id, component.ModifierKeys, component.TriggerKeys))
-            {
-                Components.Add(id, component);
-                return id;
-            }
-            return -1;
-        }
         public static int Register(ModifierKeys modifierKeys, TriggerKeys triggerKeys, ICollection<HotKeyEventHandler> handlers)
         {
             return Register((uint)modifierKeys, (uint)triggerKeys, handlers);
@@ -315,6 +497,33 @@ namespace FastHotKeyForWPF
         public static bool Unregister(ModifierKeys modifierKeys, TriggerKeys triggerKeys)
         {
             return Unregister((uint)modifierKeys, (uint)triggerKeys);
+        }
+
+        public static uint GetUint(this ICollection<ModifierKeys> source)
+        {
+            uint result = 0x0000;
+            foreach (var modifier in source)
+            {
+                result |= (uint)modifier;
+            }
+            return result;
+        }
+        public static IEnumerable<string> GetNames(this ICollection<ModifierKeys> source)
+        {
+            return source.Select(m => m.ToString());
+        }
+        public static uint GetUint(this ICollection<TriggerKeys> source)
+        {
+            uint result = 0x0000;
+            foreach (var trigger in source)
+            {
+                result |= (uint)trigger;
+            }
+            return result;
+        }
+        public static IEnumerable<string> GetNames(this ICollection<TriggerKeys> source)
+        {
+            return source.Select(t => t.ToString());
         }
     }
 }
