@@ -22,6 +22,7 @@ namespace FastHotKeyForWPF
             keyEventHandler = keyevent;
             target.KeyDown += Receiver;
             target.KeyUp += ReleaseReceiver;
+            target.MouseLeave += MouseLeave;
         }
 
         internal void Invoke(KeyEventArgs e)
@@ -43,6 +44,10 @@ namespace FastHotKeyForWPF
             _pressedKeys.Remove(e.Key == Key.System ? e.SystemKey : e.Key);
 
             Invoke(e);
+        }
+        internal void MouseLeave(object sender,RoutedEventArgs e)
+        {
+            _pressedKeys.Clear();
         }
     }
 }

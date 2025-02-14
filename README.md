@@ -100,24 +100,29 @@ You can register multiple local hotkeys for a control as follows
 - Multiple non-system keys are allowed to participate
 
 ```csharp
-  LocalHotKey.Register(inputbox, [Key.LeftCtrl, Key.K, Key.D],
+  // Inject hotkeys into MainWindow without specifying a registration target
+  LocalHotKey.Register([Key.LeftCtrl, Key.K, Key.D],
       (sender, e) =>
       {
           MessageBox.Show("Ctrl + K + D");
       });
 
+  // Inject hotkeys for the specified target
   LocalHotKey.Register(inputbox, [Key.LeftAlt, Key.K, Key.D],
       (sender, e) =>
       {
           MessageBox.Show("Alt + K + D");
       });
-
   LocalHotKey.Register(inputbox, [Key.LeftAlt, Key.LeftCtrl, Key.E, Key.F],
       (sender, e) =>
       {
           MessageBox.Show("Alt + Ctrl + E + F");
       });
 
+  // Delete all hotkeys of control
+  LocalHotKey.Unregister(inputbox);
+
+  // Removes the specified hotkey
   LocalHotKey.Unregister(inputbox, [Key.LeftAlt, Key.K, Key.D]);
 ```
 

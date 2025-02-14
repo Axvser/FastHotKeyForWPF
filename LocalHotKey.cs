@@ -5,6 +5,19 @@ namespace FastHotKeyForWPF
 {
     public static class LocalHotKey
     {
+        public static void Register(HashSet<Key> keys, KeyEventHandler keyevent)
+        {
+            var injector = new LocalHotKeyInjector(Application.Current.MainWindow, keys, keyevent);
+            if (LocalHotKeyInjector.Injectors.TryGetValue(Application.Current.MainWindow, out var injectorSet))
+            {
+
+                injectorSet.Add(injector);
+            }
+            else
+            {
+                LocalHotKeyInjector.Injectors.Add(Application.Current.MainWindow, [injector]);
+            }
+        }
         public static void Register(IInputElement target, HashSet<Key> keys, KeyEventHandler keyevent)
         {
             var injector = new LocalHotKeyInjector(target, keys, keyevent);
@@ -26,6 +39,7 @@ namespace FastHotKeyForWPF
                 {
                     target.KeyDown -= injector.Receiver;
                     target.KeyUp -= injector.ReleaseReceiver;
+                    target.MouseLeave -= injector.MouseLeave;
                 }
                 LocalHotKeyInjector.Injectors.Remove(target);
             }
@@ -41,6 +55,7 @@ namespace FastHotKeyForWPF
                     {
                         target.KeyDown -= injector.Receiver;
                         target.KeyUp -= injector.ReleaseReceiver;
+                        target.MouseLeave -= injector.MouseLeave;
                         removed.Add(injector);
                     }
                 }
