@@ -18,7 +18,10 @@
                          MouseEnter="TextBox_MouseEnter"
                          MouseLeave="TextBox_MouseLeave"
                          IsReadOnly="True"
-                         Background="Transparent"/>
+                         Background="Transparent"
+                         Grid.ZIndex="1"
+                         BorderBrush="Transparent"
+                         BorderThickness="0"/>
                     <TextBlock Text="{Binding Text, RelativeSource={RelativeSource AncestorType=local:HotKeyBox}}" 
                            Foreground="{TemplateBinding Foreground}" 
                            FontSize="{TemplateBinding FontSize}"

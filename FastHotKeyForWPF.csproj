@@ -31,7 +31,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="FastHotKeyForWPF.Generator" Version="1.1.0" />
+	  <PackageReference Include="FastHotKeyForWPF.Generator" Version="1.2.3" />
 	</ItemGroup>
 
 </Project>

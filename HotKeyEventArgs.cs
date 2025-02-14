@@ -5,7 +5,7 @@
     public class HotKeyEventArgs(uint modifiers, uint triggers) : EventArgs
     {
         public uint Modifiers => modifiers;
-        public uint Triggers => triggers;
+        public uint Keys => triggers;
 
         public ICollection<VirtualModifiers> GetModifierKeys()
         {
@@ -20,17 +20,17 @@
             return keys;
         }
 
-        public ICollection<VirtualKeys> GetTriggerKeys()
+        public VirtualKeys GetVirtualKey()
         {
             List<VirtualKeys> keys = [];
             foreach (VirtualKeys flag in Enum.GetValues(typeof(VirtualKeys)))
             {
-                if ((Triggers & (uint)flag) == (uint)flag && (uint)flag != 0x0000)
+                if ((Keys & (uint)flag) == (uint)flag && (uint)flag != 0x0000)
                 {
                     keys.Add(flag);
                 }
             }
-            return keys;
+            return keys.Max();
         }
     }
 }

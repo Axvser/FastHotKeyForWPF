@@ -82,10 +82,10 @@ namespace WpfApp4
             // Retrieves the value of the triggered hotkey
 
             MessageBox.Show($"{e.GetModifierKeys().Count}");
-            // Modifiers can be parsed from uint very precisely.
+            // system modifier can have more than one valid value
 
-            MessageBox.Show($"{e.GetTriggerKeys().Count}");
-            // Other keys can only parse out possible values from uint.Be careful with the parsing of Keys
+            MessageBox.Show($"{e.GetVirtualKey()}");
+            // Not a system modifier; only one valid Key exists
         }
     }
 }
@@ -139,7 +139,7 @@ Use the default user controls provided by the library
 ```
 
 ```xml
-  <fhk:HotKeyBox Handler="Test1" Width="400" Height="100" Margin="122,230,278,105"/>
+  <fhk:HotKeyBox Handler="Test1" CornerRadius="5" Width="400" Height="100" FontSize="40" Margin="122,63,278,272"/>
 ```
 
 ---

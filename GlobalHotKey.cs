@@ -494,9 +494,5 @@ namespace FastHotKeyForWPF
         {
             return source.Select(m => m.ToString());
         }
-        public static IEnumerable<string> GetNames(this ICollection<VirtualKeys> source)
-        {
-            return source.Select(t => t.ToString());
-        }
     }
 }
