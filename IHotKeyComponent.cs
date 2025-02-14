@@ -2,8 +2,8 @@
 {
     public interface IHotKeyComponent
     {
-        public uint ModifierKeys { get; set; }
-        public uint TriggerKeys { get; set; }
+        public uint VirtualModifiers { get; set; }
+        public uint VirtualKeys { get; set; }
 
         public event HotKeyEventHandler Handler { add { } remove { } }
         public void Invoke();

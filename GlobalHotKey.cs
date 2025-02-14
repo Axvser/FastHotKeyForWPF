@@ -5,7 +5,7 @@ using System.Windows.Interop;
 
 namespace FastHotKeyForWPF
 {
-    public enum ModifierKeys : uint
+    public enum VirtualModifiers : uint
     {
         Alt = 0x0001,
         Ctrl = 0x0002,
@@ -14,14 +14,8 @@ namespace FastHotKeyForWPF
         None = 0x0000
     }
 
-    public enum TriggerKeys : uint
+    public enum VirtualKeys : uint
     {
-        LeftButton = 0x01,
-        RightButton = 0x02,
-        Cancel = 0x03,
-        MiddleButton = 0x04,
-        XButton1 = 0x05,
-        XButton2 = 0x06,
         Back = 0x08,
         Tab = 0x09,
         Clear = 0x0C,
@@ -31,12 +25,6 @@ namespace FastHotKeyForWPF
         Alt = 0x12,
         Pause = 0x13,
         CapsLock = 0x14,
-        Kana = 0x15,
-        Hangul = 0x15,
-        Junja = 0x17,
-        Final = 0x18,
-        Hanja = 0x19,
-        Kanji = 0x19,
         Escape = 0x1B,
         Convert = 0x1C,
         NonConvert = 0x1D,
@@ -192,153 +180,147 @@ namespace FastHotKeyForWPF
 
     public static class GlobalHotKey
     {
-        public static readonly Dictionary<Key, ModifierKeys> KeyToModifierWinApiMapping = new()
+        public static readonly Dictionary<Key, VirtualModifiers> WinApiModifiersMapping = new()
         {
-           { Key.LeftShift, ModifierKeys.Shift },
-           { Key.RightShift, ModifierKeys.Shift },
-           { Key.LeftCtrl, ModifierKeys.Ctrl },
-           { Key.RightCtrl, ModifierKeys.Ctrl },
-           { Key.LeftAlt, ModifierKeys.Alt },
-           { Key.RightAlt, ModifierKeys.Alt },
-           { Key.LWin, ModifierKeys.Win },
-           { Key.RWin, ModifierKeys.Win },
+           { Key.LeftShift, VirtualModifiers.Shift },
+           { Key.RightShift, VirtualModifiers.Shift },
+           { Key.LeftCtrl, VirtualModifiers.Ctrl },
+           { Key.RightCtrl, VirtualModifiers.Ctrl },
+           { Key.LeftAlt, VirtualModifiers.Alt },
+           { Key.RightAlt, VirtualModifiers.Alt },
+           { Key.LWin, VirtualModifiers.Win },
+           { Key.RWin, VirtualModifiers.Win },
         };
 
-        public static readonly Dictionary<Key, TriggerKeys> KeyToTriggerWinApiMapping = new()
+        public static readonly Dictionary<Key, VirtualKeys> WinApiKeysMapping = new()
         {
-           { Key.Cancel, TriggerKeys.Cancel },
-           { Key.Back, TriggerKeys.Back },
-           { Key.Tab, TriggerKeys.Tab },
-           { Key.Clear, TriggerKeys.Clear },
-           { Key.Enter, TriggerKeys.Enter },
-           { Key.Pause, TriggerKeys.Pause },
-           { Key.CapsLock, TriggerKeys.CapsLock },
-           { Key.KanaMode, TriggerKeys.Kana },
-           { Key.JunjaMode, TriggerKeys.Junja },
-           { Key.FinalMode, TriggerKeys.Final },
-           { Key.HanjaMode, TriggerKeys.Hanja },
-           { Key.Escape, TriggerKeys.Escape },
-           { Key.ImeConvert, TriggerKeys.Convert },
-           { Key.ImeNonConvert, TriggerKeys.NonConvert },
-           { Key.ImeAccept, TriggerKeys.Accept },
-           { Key.ImeModeChange, TriggerKeys.ModeChange },
-           { Key.Space, TriggerKeys.Space },
-           { Key.PageUp, TriggerKeys.PageUp },
-           { Key.PageDown, TriggerKeys.PageDown },
-           { Key.End, TriggerKeys.End },
-           { Key.Home, TriggerKeys.Home },
-           { Key.Left, TriggerKeys.LeftArrow },
-           { Key.Up, TriggerKeys.UpArrow },
-           { Key.Right, TriggerKeys.RightArrow },
-           { Key.Down, TriggerKeys.DownArrow },
-           { Key.Select, TriggerKeys.Select },
-           { Key.Print, TriggerKeys.Print },
-           { Key.Execute, TriggerKeys.Execute },
-           { Key.PrintScreen, TriggerKeys.PrintScreen },
-           { Key.Insert, TriggerKeys.Insert },
-           { Key.Delete, TriggerKeys.Delete },
-           { Key.Help, TriggerKeys.Help },
-           { Key.D0, TriggerKeys.D0 },
-           { Key.D1, TriggerKeys.D1 },
-           { Key.D2, TriggerKeys.D2 },
-           { Key.D3, TriggerKeys.D3 },
-           { Key.D4, TriggerKeys.D4 },
-           { Key.D5, TriggerKeys.D5 },
-           { Key.D6, TriggerKeys.D6 },
-           { Key.D7, TriggerKeys.D7 },
-           { Key.D8, TriggerKeys.D8 },
-           { Key.D9, TriggerKeys.D9 },
-           { Key.A, TriggerKeys.A },
-           { Key.B, TriggerKeys.B },
-           { Key.C, TriggerKeys.C },
-           { Key.D, TriggerKeys.D },
-           { Key.E, TriggerKeys.E },
-           { Key.F, TriggerKeys.F },
-           { Key.G, TriggerKeys.G },
-           { Key.H, TriggerKeys.H },
-           { Key.I, TriggerKeys.I },
-           { Key.J, TriggerKeys.J },
-           { Key.K, TriggerKeys.K },
-           { Key.L, TriggerKeys.L },
-           { Key.M, TriggerKeys.M },
-           { Key.N, TriggerKeys.N },
-           { Key.O, TriggerKeys.O },
-           { Key.P, TriggerKeys.P },
-           { Key.Q, TriggerKeys.Q },
-           { Key.R, TriggerKeys.R },
-           { Key.S, TriggerKeys.S },
-           { Key.T, TriggerKeys.T },
-           { Key.U, TriggerKeys.U },
-           { Key.V, TriggerKeys.V },
-           { Key.W, TriggerKeys.W },
-           { Key.X, TriggerKeys.X },
-           { Key.Y, TriggerKeys.Y },
-           { Key.Z, TriggerKeys.Z },
-           { Key.Apps, TriggerKeys.Apps },
-           { Key.Sleep, TriggerKeys.Sleep },
-           { Key.NumPad0, TriggerKeys.NumPad0 },
-           { Key.NumPad1, TriggerKeys.NumPad1 },
-           { Key.NumPad2, TriggerKeys.NumPad2 },
-           { Key.NumPad3, TriggerKeys.NumPad3 },
-           { Key.NumPad4, TriggerKeys.NumPad4 },
-           { Key.NumPad5, TriggerKeys.NumPad5 },
-           { Key.NumPad6, TriggerKeys.NumPad6 },
-           { Key.NumPad7, TriggerKeys.NumPad7 },
-           { Key.NumPad8, TriggerKeys.NumPad8 },
-           { Key.NumPad9, TriggerKeys.NumPad9 },
-           { Key.Multiply, TriggerKeys.Multiply },
-           { Key.Add, TriggerKeys.Add },
-           { Key.Subtract, TriggerKeys.Subtract },
-           { Key.Decimal, TriggerKeys.Decimal },
-           { Key.Divide, TriggerKeys.Divide },
-           { Key.F1, TriggerKeys.F1 },
-           { Key.F2, TriggerKeys.F2 },
-           { Key.F3, TriggerKeys.F3 },
-           { Key.F4, TriggerKeys.F4 },
-           { Key.F5, TriggerKeys.F5 },
-           { Key.F6, TriggerKeys.F6 },
-           { Key.F7, TriggerKeys.F7 },
-           { Key.F8, TriggerKeys.F8 },
-           { Key.F9, TriggerKeys.F9 },
-           { Key.F10, TriggerKeys.F10 },
-           { Key.F11, TriggerKeys.F11 },
-           { Key.F12, TriggerKeys.F12 },
-           { Key.F13, TriggerKeys.F13 },
-           { Key.F14, TriggerKeys.F14 },
-           { Key.F15, TriggerKeys.F15 },
-           { Key.F16, TriggerKeys.F16 },
-           { Key.F17, TriggerKeys.F17 },
-           { Key.F18, TriggerKeys.F18 },
-           { Key.F19, TriggerKeys.F19 },
-           { Key.F20, TriggerKeys.F20 },
-           { Key.F21, TriggerKeys.F21 },
-           { Key.F22, TriggerKeys.F22 },
-           { Key.F23, TriggerKeys.F23 },
-           { Key.F24, TriggerKeys.F24 },
-           { Key.NumLock, TriggerKeys.NumLock },
-           { Key.Scroll, TriggerKeys.ScrollLock },
-           { Key.OemSemicolon, TriggerKeys.Semicolon },
-           { Key.OemPlus, TriggerKeys.Plus },
-           { Key.OemComma, TriggerKeys.Comma },
-           { Key.OemMinus, TriggerKeys.Minus },
-           { Key.OemPeriod, TriggerKeys.Period },
-           { Key.OemQuestion, TriggerKeys.Slash },
-           { Key.OemTilde, TriggerKeys.GraveAccentAndTilde },
-           { Key.OemOpenBrackets, TriggerKeys.OpenBracket },
-           { Key.OemPipe, TriggerKeys.Backslash },
-           { Key.OemCloseBrackets, TriggerKeys.CloseBracket },
-           { Key.OemQuotes, TriggerKeys.Quote },
-           { Key.OemBackslash, TriggerKeys.OEM_102 },
-           { Key.ImeProcessed, TriggerKeys.ProcessKey },
-           { Key.OemAttn, TriggerKeys.Attention },
-           { Key.CrSel, TriggerKeys.CrSel },
-           { Key.ExSel, TriggerKeys.ExSel },
-           { Key.EraseEof, TriggerKeys.EraseEOF },
-           { Key.Play, TriggerKeys.Play },
-           { Key.Zoom, TriggerKeys.Zoom },
-           { Key.None, TriggerKeys.None },
-           { Key.Pa1, TriggerKeys.PA1 },
-           { Key.OemClear, TriggerKeys.OEM_Clear }
+           { Key.Back, VirtualKeys.Back },
+           { Key.Tab, VirtualKeys.Tab },
+           { Key.Clear, VirtualKeys.Clear },
+           { Key.Enter, VirtualKeys.Enter },
+           { Key.Pause, VirtualKeys.Pause },
+           { Key.CapsLock, VirtualKeys.CapsLock },
+           { Key.Escape, VirtualKeys.Escape },
+           { Key.ImeConvert, VirtualKeys.Convert },
+           { Key.ImeNonConvert, VirtualKeys.NonConvert },
+           { Key.ImeAccept, VirtualKeys.Accept },
+           { Key.ImeModeChange, VirtualKeys.ModeChange },
+           { Key.Space, VirtualKeys.Space },
+           { Key.PageUp, VirtualKeys.PageUp },
+           { Key.PageDown, VirtualKeys.PageDown },
+           { Key.End, VirtualKeys.End },
+           { Key.Home, VirtualKeys.Home },
+           { Key.Left, VirtualKeys.LeftArrow },
+           { Key.Up, VirtualKeys.UpArrow },
+           { Key.Right, VirtualKeys.RightArrow },
+           { Key.Down, VirtualKeys.DownArrow },
+           { Key.Select, VirtualKeys.Select },
+           { Key.Print, VirtualKeys.Print },
+           { Key.Execute, VirtualKeys.Execute },
+           { Key.PrintScreen, VirtualKeys.PrintScreen },
+           { Key.Insert, VirtualKeys.Insert },
+           { Key.Delete, VirtualKeys.Delete },
+           { Key.Help, VirtualKeys.Help },
+           { Key.D0, VirtualKeys.D0 },
+           { Key.D1, VirtualKeys.D1 },
+           { Key.D2, VirtualKeys.D2 },
+           { Key.D3, VirtualKeys.D3 },
+           { Key.D4, VirtualKeys.D4 },
+           { Key.D5, VirtualKeys.D5 },
+           { Key.D6, VirtualKeys.D6 },
+           { Key.D7, VirtualKeys.D7 },
+           { Key.D8, VirtualKeys.D8 },
+           { Key.D9, VirtualKeys.D9 },
+           { Key.A, VirtualKeys.A },
+           { Key.B, VirtualKeys.B },
+           { Key.C, VirtualKeys.C },
+           { Key.D, VirtualKeys.D },
+           { Key.E, VirtualKeys.E },
+           { Key.F, VirtualKeys.F },
+           { Key.G, VirtualKeys.G },
+           { Key.H, VirtualKeys.H },
+           { Key.I, VirtualKeys.I },
+           { Key.J, VirtualKeys.J },
+           { Key.K, VirtualKeys.K },
+           { Key.L, VirtualKeys.L },
+           { Key.M, VirtualKeys.M },
+           { Key.N, VirtualKeys.N },
+           { Key.O, VirtualKeys.O },
+           { Key.P, VirtualKeys.P },
+           { Key.Q, VirtualKeys.Q },
+           { Key.R, VirtualKeys.R },
+           { Key.S, VirtualKeys.S },
+           { Key.T, VirtualKeys.T },
+           { Key.U, VirtualKeys.U },
+           { Key.V, VirtualKeys.V },
+           { Key.W, VirtualKeys.W },
+           { Key.X, VirtualKeys.X },
+           { Key.Y, VirtualKeys.Y },
+           { Key.Z, VirtualKeys.Z },
+           { Key.Apps, VirtualKeys.Apps },
+           { Key.Sleep, VirtualKeys.Sleep },
+           { Key.NumPad0, VirtualKeys.NumPad0 },
+           { Key.NumPad1, VirtualKeys.NumPad1 },
+           { Key.NumPad2, VirtualKeys.NumPad2 },
+           { Key.NumPad3, VirtualKeys.NumPad3 },
+           { Key.NumPad4, VirtualKeys.NumPad4 },
+           { Key.NumPad5, VirtualKeys.NumPad5 },
+           { Key.NumPad6, VirtualKeys.NumPad6 },
+           { Key.NumPad7, VirtualKeys.NumPad7 },
+           { Key.NumPad8, VirtualKeys.NumPad8 },
+           { Key.NumPad9, VirtualKeys.NumPad9 },
+           { Key.Multiply, VirtualKeys.Multiply },
+           { Key.Add, VirtualKeys.Add },
+           { Key.Subtract, VirtualKeys.Subtract },
+           { Key.Decimal, VirtualKeys.Decimal },
+           { Key.Divide, VirtualKeys.Divide },
+           { Key.F1, VirtualKeys.F1 },
+           { Key.F2, VirtualKeys.F2 },
+           { Key.F3, VirtualKeys.F3 },
+           { Key.F4, VirtualKeys.F4 },
+           { Key.F5, VirtualKeys.F5 },
+           { Key.F6, VirtualKeys.F6 },
+           { Key.F7, VirtualKeys.F7 },
+           { Key.F8, VirtualKeys.F8 },
+           { Key.F9, VirtualKeys.F9 },
+           { Key.F10, VirtualKeys.F10 },
+           { Key.F11, VirtualKeys.F11 },
+           { Key.F12, VirtualKeys.F12 },
+           { Key.F13, VirtualKeys.F13 },
+           { Key.F14, VirtualKeys.F14 },
+           { Key.F15, VirtualKeys.F15 },
+           { Key.F16, VirtualKeys.F16 },
+           { Key.F17, VirtualKeys.F17 },
+           { Key.F18, VirtualKeys.F18 },
+           { Key.F19, VirtualKeys.F19 },
+           { Key.F20, VirtualKeys.F20 },
+           { Key.F21, VirtualKeys.F21 },
+           { Key.F22, VirtualKeys.F22 },
+           { Key.F23, VirtualKeys.F23 },
+           { Key.F24, VirtualKeys.F24 },
+           { Key.NumLock, VirtualKeys.NumLock },
+           { Key.Scroll, VirtualKeys.ScrollLock },
+           { Key.OemSemicolon, VirtualKeys.Semicolon },
+           { Key.OemPlus, VirtualKeys.Plus },
+           { Key.OemComma, VirtualKeys.Comma },
+           { Key.OemMinus, VirtualKeys.Minus },
+           { Key.OemPeriod, VirtualKeys.Period },
+           { Key.OemQuestion, VirtualKeys.Slash },
+           { Key.OemTilde, VirtualKeys.GraveAccentAndTilde },
+           { Key.OemOpenBrackets, VirtualKeys.OpenBracket },
+           { Key.OemPipe, VirtualKeys.Backslash },
+           { Key.OemCloseBrackets, VirtualKeys.CloseBracket },
+           { Key.OemQuotes, VirtualKeys.Quote },
+           { Key.OemBackslash, VirtualKeys.OEM_102 },
+           { Key.ImeProcessed, VirtualKeys.ProcessKey },
+           { Key.OemAttn, VirtualKeys.Attention },
+           { Key.CrSel, VirtualKeys.CrSel },
+           { Key.ExSel, VirtualKeys.ExSel },
+           { Key.EraseEof, VirtualKeys.EraseEOF },
+           { Key.Play, VirtualKeys.Play },
+           { Key.Zoom, VirtualKeys.Zoom },
+           { Key.Pa1, VirtualKeys.PA1 },
+           { Key.OemClear, VirtualKeys.OEM_Clear }
         };
 
         [DllImport("user32.dll")]
@@ -422,20 +404,21 @@ namespace FastHotKeyForWPF
             source?.Dispose();
             IsAwaked = false;
         }
+
         public static int Register(IHotKeyComponent component)
         {
-            if (component.TriggerKeys == 0x0000 || component.ModifierKeys == 0x0000) return -1;
+            if (component.VirtualKeys == 0x0000 || component.VirtualModifiers == 0x0000) return -1;
 
             if (IsAwaked)
             {
-                var id = 2025 + HashCode.Combine(component.ModifierKeys, component.TriggerKeys);
+                var id = 2025 + HashCode.Combine(component.VirtualModifiers, component.VirtualKeys);
                 UnregisterHotKey(WindowhWnd, id);
                 if (Components.TryGetValue(id, out var same))
                 {
                     Components.Remove(id);
                     same.Covered();
                 }
-                if (RegisterHotKey(WindowhWnd, id, component.ModifierKeys, component.TriggerKeys))
+                if (RegisterHotKey(WindowhWnd, id, component.VirtualModifiers, component.VirtualKeys))
                 {
                     Components.Add(id, component);
                     return id;
@@ -447,10 +430,11 @@ namespace FastHotKeyForWPF
             }
             else
             {
-                WaitToBeRegisteredVisual.Enqueue(Tuple.Create(component.ModifierKeys, component.TriggerKeys, component));
+                WaitToBeRegisteredVisual.Enqueue(Tuple.Create(component.VirtualModifiers, component.VirtualKeys, component));
                 return 0;
             }
         }
+
         public static int Register(uint modifiers, uint triggers, ICollection<HotKeyEventHandler> handlers)
         {
             if (modifiers == 0x0000 || triggers == 0x0000) return -1;
@@ -483,23 +467,22 @@ namespace FastHotKeyForWPF
         {
             var id = 2025 + HashCode.Combine(modifiers, triggers);
             var ureg = UnregisterHotKey(WindowhWnd, id);
-            if (Components.TryGetValue(id, out var component))
+            if (Components.TryGetValue(id, out _))
             {
                 Components.Remove(id);
             }
             return ureg;
         }
-
-        public static int Register(ModifierKeys modifierKeys, TriggerKeys triggerKeys, ICollection<HotKeyEventHandler> handlers)
+        public static int Register(VirtualModifiers modifierKeys, VirtualKeys triggerKeys, ICollection<HotKeyEventHandler> handlers)
         {
             return Register((uint)modifierKeys, (uint)triggerKeys, handlers);
         }
-        public static bool Unregister(ModifierKeys modifierKeys, TriggerKeys triggerKeys)
+        public static bool Unregister(VirtualModifiers modifierKeys, VirtualKeys triggerKeys)
         {
             return Unregister((uint)modifierKeys, (uint)triggerKeys);
         }
 
-        public static uint GetUint(this ICollection<ModifierKeys> source)
+        public static uint GetUint(this ICollection<VirtualModifiers> source)
         {
             uint result = 0x0000;
             foreach (var modifier in source)
@@ -508,11 +491,11 @@ namespace FastHotKeyForWPF
             }
             return result;
         }
-        public static IEnumerable<string> GetNames(this ICollection<ModifierKeys> source)
+        public static IEnumerable<string> GetNames(this ICollection<VirtualModifiers> source)
         {
             return source.Select(m => m.ToString());
         }
-        public static uint GetUint(this ICollection<TriggerKeys> source)
+        public static uint GetUint(this ICollection<VirtualKeys> source)
         {
             uint result = 0x0000;
             foreach (var trigger in source)
@@ -521,7 +504,7 @@ namespace FastHotKeyForWPF
             }
             return result;
         }
-        public static IEnumerable<string> GetNames(this ICollection<TriggerKeys> source)
+        public static IEnumerable<string> GetNames(this ICollection<VirtualKeys> source)
         {
             return source.Select(t => t.ToString());
         }

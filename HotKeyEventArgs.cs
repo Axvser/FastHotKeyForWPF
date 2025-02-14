@@ -7,10 +7,10 @@
         public uint Modifiers => modifiers;
         public uint Triggers => triggers;
 
-        public ICollection<ModifierKeys> GetModifierKeys()
+        public ICollection<VirtualModifiers> GetModifierKeys()
         {
-            List<ModifierKeys> keys = [];
-            foreach (ModifierKeys flag in Enum.GetValues(typeof(ModifierKeys)))
+            List<VirtualModifiers> keys = [];
+            foreach (VirtualModifiers flag in Enum.GetValues(typeof(VirtualModifiers)))
             {
                 if ((Modifiers & (uint)flag) == (uint)flag && (uint)flag != 0x0000)
                 {
@@ -20,10 +20,10 @@
             return keys;
         }
 
-        public ICollection<TriggerKeys> GetTriggerKeys()
+        public ICollection<VirtualKeys> GetTriggerKeys()
         {
-            List<TriggerKeys> keys = [];
-            foreach (TriggerKeys flag in Enum.GetValues(typeof(TriggerKeys)))
+            List<VirtualKeys> keys = [];
+            foreach (VirtualKeys flag in Enum.GetValues(typeof(VirtualKeys)))
             {
                 if ((Triggers & (uint)flag) == (uint)flag && (uint)flag != 0x0000)
                 {

@@ -38,13 +38,13 @@ namespace WpfApp4
             GlobalHotKey.Awake();
 
             // Add HotKey
-            GlobalHotKey.Register(ModifierKeys.Ctrl | ModifierKeys.Alt, // modifiers
-                                  TriggerKeys.F1 | TriggerKeys.F2,      // triggers
+            GlobalHotKey.Register(VirtualModifiers.Ctrl | VirtualModifiers.Alt, // modifiers
+                                  VirtualKeys.F1 | VirtualKeys.F2,      // triggers
                                   [Test1, Test2]);                       // events
 
             // Remove HotKey
-            GlobalHotKey.Unregister(ModifierKeys.Ctrl | ModifierKeys.Alt, // modifiers
-                                    TriggerKeys.F1 | TriggerKeys.F2);     // triggers
+            GlobalHotKey.Unregister(VirtualModifiers.Ctrl | VirtualModifiers.Alt, // modifiers
+                                    VirtualKeys.F1 | VirtualKeys.F2);     // triggers
         }
 
         protected override void OnClosed(EventArgs e)
@@ -72,7 +72,7 @@ namespace WpfApp4
             // Retrieves the value of the triggered hotkey
 
             MessageBox.Show($"{e.GetModifierKeys().Count}");
-            // Since there are only five ModifierKeys, this method usually parses accurately
+            // Since there are only five VirtualModifiers, this method usually parses accurately
 
             MessageBox.Show($"{e.GetTriggerKeys().Count}");
             // Imprecise, but the original key is included in the set
@@ -204,17 +204,17 @@ namespace WpfApp4
 
 | Content Type | Name                  | Type                       | Description                                                                 |
 |--------------|-----------------------|----------------------------|-----------------------------------------------------------------------------|
-| Property     | ModifierKeys          | uint                       | Gets or sets the modifier keys for the hotkey combination.                |
-| Property     | TriggerKeys           | uint                       | Gets or sets the trigger keys for the hotkey combination.                 |
+| Property     | VirtualModifiers          | uint                       | Gets or sets the modifier keys for the hotkey combination.                |
+| Property     | VirtualKeys           | uint                       | Gets or sets the trigger keys for the hotkey combination.                 |
 | Property     | Text                  | string                     | Gets or sets the text representation of the hotkey displayed on the control.|
 | Event        | Handler               | HotKeyEventHandler         | The event handler called when the hotkey is triggered.                    |
 | Method       | Invoke                | void                       | Invokes the hotkey event handlers.                                        |
 | Method       | Covered               | void                       | Clears all hotkey information and resets the control state.               |
-| Method       | OnModifierKeysChanged | (uint oldKeys, uint newKeys) | Called when the ModifierKeys property changes.                            |
-| Method       | OnTriggerKeysChanged  | (uint oldKeys, uint newKeys) | Called when the TriggerKeys property changes.                             |
+| Method       | OnModifierKeysChanged | (uint oldKeys, uint newKeys) | Called when the VirtualModifiers property changes.                            |
+| Method       | OnTriggerKeysChanged  | (uint oldKeys, uint newKeys) | Called when the VirtualKeys property changes.                             |
 | Method       | OnHotKeyInvoking      | void                       | Called within the Invoke method before invoking the hotkey event handlers.  |
 | Method       | OnHotKeyInvoked       | void                       | Called within the Invoke method after invoking the hotkey event handlers.   |
 | Method       | OnCovered             | void                       | Called within the Covered method after clearing the hotkey information.     |
 | Method       | OnHotKeyReceived      | (object sender, System.Windows.Input.KeyEventArgs e) | Handles key events to update hotkey information.                          |
-| Method       | UpdateValue           | void                       | Updates the values of the ModifierKeys, TriggerKeys, and Text properties. |
+| Method       | UpdateValue           | void                       | Updates the values of the VirtualModifiers, VirtualKeys, and Text properties. |
 | Method       | OnHotKeyUpdated       | void                       | Called within the UpdateValue method after updating the hotkey information. |

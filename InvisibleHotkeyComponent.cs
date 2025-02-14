@@ -2,8 +2,8 @@
 {
     internal class InvisibleHotkeyComponent(uint modifierKeys, uint triggerKeys) : IHotKeyComponent
     {
-        public uint ModifierKeys { get; set; } = modifierKeys;
-        public uint TriggerKeys { get; set; } = triggerKeys;
+        public uint VirtualModifiers { get; set; } = modifierKeys;
+        public uint VirtualKeys { get; set; } = triggerKeys;
 
         private event HotKeyEventHandler? handlers;
         public virtual event HotKeyEventHandler Handler
@@ -14,7 +14,7 @@
 
         public void Invoke()
         {
-            handlers?.Invoke(null, new HotKeyEventArgs(ModifierKeys, TriggerKeys));
+            handlers?.Invoke(null, new HotKeyEventArgs(VirtualModifiers, VirtualKeys));
         }
         public void Covered()
         {
