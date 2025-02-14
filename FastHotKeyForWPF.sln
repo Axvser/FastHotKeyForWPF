@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastHotKeyForWPF", "FastHot
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp4", "..\WpfApp4\WpfApp4.csproj", "{EF18FB7D-0187-4411-BFB4-8939C7692387}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastHotKeyForWPF.Generator", "..\FastHotKeyForWPF.Generator\FastHotKeyForWPF.Generator.csproj", "{75BA82E4-292A-4D86-A877-1D9228960717}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{EF18FB7D-0187-4411-BFB4-8939C7692387}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF18FB7D-0187-4411-BFB4-8939C7692387}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF18FB7D-0187-4411-BFB4-8939C7692387}.Release|Any CPU.Build.0 = Release|Any CPU
-		{75BA82E4-292A-4D86-A877-1D9228960717}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{75BA82E4-292A-4D86-A877-1D9228960717}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{75BA82E4-292A-4D86-A877-1D9228960717}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{75BA82E4-292A-4D86-A877-1D9228960717}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

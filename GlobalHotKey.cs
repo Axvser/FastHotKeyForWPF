@@ -484,25 +484,15 @@ namespace FastHotKeyForWPF
 
         public static uint GetUint(this ICollection<VirtualModifiers> source)
         {
-            uint result = 0x0000;
-            foreach (var modifier in source)
-            {
-                result |= (uint)modifier;
-            }
-            return result;
+            return source.Any() ? (uint)source.Aggregate((current, next) => current | next) : 0x0000;
+        }
+        public static uint GetUint(this ICollection<VirtualKeys> source)
+        {
+            return source.Any() ? (uint)source.Aggregate((current, next) => current | next) : 0x0000;
         }
         public static IEnumerable<string> GetNames(this ICollection<VirtualModifiers> source)
         {
             return source.Select(m => m.ToString());
-        }
-        public static uint GetUint(this ICollection<VirtualKeys> source)
-        {
-            uint result = 0x0000;
-            foreach (var trigger in source)
-            {
-                result |= (uint)trigger;
-            }
-            return result;
         }
         public static IEnumerable<string> GetNames(this ICollection<VirtualKeys> source)
         {

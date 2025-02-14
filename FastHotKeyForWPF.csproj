@@ -10,7 +10,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>FastHotKeyForWPF</Title>
-		<Version>2.8.0-pre</Version>
+		<Version>2.9.0</Version>
 		<Authors>Axvser</Authors>
 		<Company></Company>
 		<Description>Quickly build global hotkeys for WPF</Description>
@@ -28,6 +28,10 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="FastHotKeyForWPF.Generator" Version="1.1.0" />
 	</ItemGroup>
 
 </Project>
