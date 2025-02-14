@@ -202,19 +202,22 @@ namespace WpfApp4
 
 - ## 4. What the source generator specifically produces
 
-| Content Type | Name                  | Type                       | Description                                                                 |
-|--------------|-----------------------|----------------------------|-----------------------------------------------------------------------------|
-| Property     | VirtualModifiers          | uint                       | Gets or sets the modifier keys for the hotkey combination.                |
-| Property     | VirtualKeys           | uint                       | Gets or sets the trigger keys for the hotkey combination.                 |
-| Property     | Text                  | string                     | Gets or sets the text representation of the hotkey displayed on the control.|
-| Event        | Handler               | HotKeyEventHandler         | The event handler called when the hotkey is triggered.                    |
-| Method       | Invoke                | void                       | Invokes the hotkey event handlers.                                        |
-| Method       | Covered               | void                       | Clears all hotkey information and resets the control state.               |
-| Method       | OnModifierKeysChanged | (uint oldKeys, uint newKeys) | Called when the VirtualModifiers property changes.                            |
-| Method       | OnTriggerKeysChanged  | (uint oldKeys, uint newKeys) | Called when the VirtualKeys property changes.                             |
-| Method       | OnHotKeyInvoking      | void                       | Called within the Invoke method before invoking the hotkey event handlers.  |
-| Method       | OnHotKeyInvoked       | void                       | Called within the Invoke method after invoking the hotkey event handlers.   |
-| Method       | OnCovered             | void                       | Called within the Covered method after clearing the hotkey information.     |
-| Method       | OnHotKeyReceived      | (object sender, System.Windows.Input.KeyEventArgs e) | Handles key events to update hotkey information.                          |
-| Method       | UpdateValue           | void                       | Updates the values of the VirtualModifiers, VirtualKeys, and Text properties. |
-| Method       | OnHotKeyUpdated       | void                       | Called within the UpdateValue method after updating the hotkey information. |
+| Produce                                  | Description                                                                                                                                                                                                                         |
+|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| VirtualModifiers                         | A dependency property representing the virtual modifiers for the hotkey. Changing this value directly registers or modifies the hotkey without updating the UI.                                                                               |
+| VirtualKeys                              | A dependency property representing the virtual keys for the hotkey. Changing this value directly registers or modifies the hotkey without updating the UI.                                                                                 |
+| OnModifiersChanged                       | Partial method to optionally extend logic when the key modifiers are changed.                                                                                                                                                           |
+| OnKeysChanged                            | Partial method to optionally extend logic when the keys are changed.                                                                                                                                                                    |
+| Handler                                  | Event triggered when the hotkey is invoked. Multiple handlers can be added or removed from this event.                                                                                                                              |
+| Invoke                                   | Method to invoke the hotkey handling events, calling `OnHotKeyInvoking` before invoking all registered handlers, and then calling `OnHotKeyInvoked` after invocation.                                                               |
+| OnHotKeyInvoking                         | Partial method called before the hotkey event is triggered.                                                                                                                                                                             |
+| OnHotKeyInvoked                          | Partial method called after the hotkey event is triggered.                                                                                                                                                                              |
+| Covered                                  | Method executed if the key combination duplicates an existing hotkey registration elsewhere, clearing internal state and resetting properties. Calls `OnCovered` afterward.                                                           |
+| OnCovering                               | Partial method called before the component is covered due to duplicate hotkey registration.                                                                                                                                            |
+| OnCovered                                | Partial method called after the component is covered due to duplicate hotkey registration.                                                                                                                                            |
+| Text                                     | Dependency property representing the text representation of the hotkey combination, updated automatically based on `modifiers` and `triggers` sets.                                                                              |
+| OnHotKeyReceived                         | Protected virtual method handling keyboard input for binding purposes, updates UI by modifying `modifiers` and `triggers` sets based on received key events.                                                                           |
+| UpdateHotKey                             | Protected virtual method updating the hotkey properties (`VirtualModifiers`, `VirtualKeys`, and `Text`) based on current `modifiers` and `triggers` states. Also calls `OnHotKeyUpdating` before and `OnHotKeyUpdated` after the update.       |
+| OnHotKeyUpdating                         | Partial method called before the hotkey is updated.                                                                                                                                                                                     |
+| OnHotKeyUpdated                          | Partial method called after the hotkey is updated.                                                                                                                                                                                      |
+
