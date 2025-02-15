@@ -371,11 +371,12 @@ namespace FastHotKeyForWPF
 #if NET5_0_OR_GREATER
                     if (WaitToBeRegisteredInvisible.TryDequeue(out var meta))
                     {
+                    Register(meta.Item1, meta.Item2, meta.Item3);
 #endif
 #if NETFRAMEWORK
-                        var meta = WaitToBeRegisteredInvisible.Dequeue();
+                    var meta = WaitToBeRegisteredInvisible.Dequeue();
+                    Register(meta.Item1, meta.Item2, meta.Item3.ToArray());
 #endif
-                        Register(meta.Item1, meta.Item2, meta.Item3);
 #if NET5_0_OR_GREATER
                     }
 #endif
@@ -395,15 +396,15 @@ namespace FastHotKeyForWPF
 #if NET5_0_OR_GREATER
                         var hash = 2025 + HashCode.Combine(meta.Item1, meta.Item2);
 #endif
-                        RegisterHotKey(WindowhWnd, hash, meta.Item1, meta.Item2);
-                        if (Components.TryGetValue(hash, out _))
-                        {
-                            Components[hash] = meta.Item3;
-                        }
-                        else
-                        {
-                            Components.Add(hash, meta.Item3);
-                        }
+                    RegisterHotKey(WindowhWnd, hash, meta.Item1, meta.Item2);
+                    if (Components.TryGetValue(hash, out _))
+                    {
+                        Components[hash] = meta.Item3;
+                    }
+                    else
+                    {
+                        Components.Add(hash, meta.Item3);
+                    }
 #if NET5_0_OR_GREATER
                     }
 #endif
@@ -423,19 +424,14 @@ namespace FastHotKeyForWPF
             source?.Dispose();
             IsAwaked = false;
         }
-
+#if NET5_0_OR_GREATER
         public static int Register(IHotKeyComponent component)
         {
             if (component.VirtualKeys == 0x0000 || component.VirtualModifiers == 0x0000) return -1;
 
             if (IsAwaked)
             {
-#if NETFRAMEWORK
-                var id = 2025 + FrameworkSupport.HashCombine(component.VirtualModifiers, component.VirtualKeys);
-#endif
-#if NET5_0_OR_GREATER
                 var id = 2025 + HashCode.Combine(component.VirtualModifiers, component.VirtualKeys);
-#endif
                 UnregisterHotKey(WindowhWnd, id);
                 if (Components.TryGetValue(id, out var same))
                 {
@@ -458,19 +454,13 @@ namespace FastHotKeyForWPF
                 return 0;
             }
         }
-
         public static int Register(uint modifiers, uint triggers, ICollection<HotKeyEventHandler> handlers)
         {
             if (modifiers == 0x0000 || triggers == 0x0000) return -1;
 
             if (IsAwaked)
             {
-#if NETFRAMEWORK
-                var id = 2025 + FrameworkSupport.HashCombine(modifiers, triggers);
-#endif
-#if NET5_0_OR_GREATER
                 var id = 2025 + HashCode.Combine(modifiers, triggers);
-#endif
                 Unregister(modifiers, triggers);
                 var reg = RegisterHotKey(WindowhWnd, id, modifiers, triggers);
 
@@ -492,6 +482,74 @@ namespace FastHotKeyForWPF
                 return 0;
             }
         }
+        public static int Register(VirtualModifiers modifierKeys, VirtualKeys triggerKeys, ICollection<HotKeyEventHandler> handlers)
+        {
+            return Register((uint)modifierKeys, (uint)triggerKeys, handlers);
+        }
+#endif
+#if NETFRAMEWORK
+        public static int Register(IHotKeyComponent component)
+        {
+            if (component.VirtualKeys == 0x0000 || component.VirtualModifiers == 0x0000) return -1;
+
+            if (IsAwaked)
+            {
+                var id = 2025 + FrameworkSupport.HashCombine(component.VirtualModifiers, component.VirtualKeys);
+                UnregisterHotKey(WindowhWnd, id);
+                if (Components.TryGetValue(id, out var same))
+                {
+                    Components.Remove(id);
+                    same.Covered();
+                }
+                if (RegisterHotKey(WindowhWnd, id, component.VirtualModifiers, component.VirtualKeys))
+                {
+                    Components.Add(id, component);
+                    return id;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                WaitToBeRegisteredVisual.Enqueue(Tuple.Create(component.VirtualModifiers, component.VirtualKeys, component));
+                return 0;
+            }
+        }
+        public static int Register(uint modifiers, uint triggers, params HotKeyEventHandler[] handlers)
+        {
+            if (modifiers == 0x0000 || triggers == 0x0000) return -1;
+
+            if (IsAwaked)
+            {
+                var id = 2025 + FrameworkSupport.HashCombine(modifiers, triggers);
+                Unregister(modifiers, triggers);
+                var reg = RegisterHotKey(WindowhWnd, id, modifiers, triggers);
+
+                if (reg)
+                {
+                    var component = new InvisibleHotkeyComponent(modifiers, triggers);
+                    foreach (var handler in handlers)
+                    {
+                        component.Handler += handler;
+                    }
+                    Components.Add(id, component);
+                }
+
+                return reg ? id : -1;
+            }
+            else
+            {
+                WaitToBeRegisteredInvisible.Enqueue(Tuple.Create(modifiers, triggers, handlers as ICollection<HotKeyEventHandler>));
+                return 0;
+            }
+        }
+        public static int Register(VirtualModifiers modifierKeys, VirtualKeys triggerKeys, params HotKeyEventHandler[] handlers)
+        {
+            return Register((uint)modifierKeys, (uint)triggerKeys, handlers);
+        }
+#endif
         public static bool Unregister(uint modifiers, uint triggers)
         {
 #if NETFRAMEWORK
@@ -506,10 +564,6 @@ namespace FastHotKeyForWPF
                 Components.Remove(id);
             }
             return ureg;
-        }
-        public static int Register(VirtualModifiers modifierKeys, VirtualKeys triggerKeys, ICollection<HotKeyEventHandler> handlers)
-        {
-            return Register((uint)modifierKeys, (uint)triggerKeys, handlers);
         }
         public static bool Unregister(VirtualModifiers modifierKeys, VirtualKeys triggerKeys)
         {

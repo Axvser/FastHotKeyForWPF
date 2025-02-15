@@ -12,6 +12,8 @@ Versions →
 - [2.9.0](#) `alpha` `net 5`
 - [2.9.1](#) `alpha` `net 5` `net framework4.7.1`
 
+The syntax for registering hotkeys may vary slightly from framework to framework, mainly due to how collections are represented in function parameters.The documentation only demonstrates the syntax in `net 5`
+
 ---
 
 # Ⅰ Invisible `net 5` `net framework4.7.1`
@@ -50,12 +52,12 @@ namespace WpfApp4
 
             // Add HotKey
             GlobalHotKey.Register(VirtualModifiers.Ctrl | VirtualModifiers.Alt, // modifiers
-                                  VirtualKeys.F1 | VirtualKeys.F2,      // triggers
-                                  [Test1, Test2]);                       // events
+                                  VirtualKeys.F1,                               // key
+                                  [Test1, Test2]);                              // events
 
             // Remove HotKey
-            GlobalHotKey.Unregister(VirtualModifiers.Ctrl | VirtualModifiers.Alt, // modifiers
-                                    VirtualKeys.F1 | VirtualKeys.F2);     // triggers
+            GlobalHotKey.Unregister(VirtualModifiers.Ctrl | VirtualModifiers.Alt,
+                                    VirtualKeys.F1);
         }
 
         protected override void OnClosed(EventArgs e)
