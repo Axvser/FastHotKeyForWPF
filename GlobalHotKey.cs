@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -368,16 +369,33 @@ namespace FastHotKeyForWPF
                 IsAwaked = true;
                 while (WaitToBeRegisteredInvisible.Count > 0)
                 {
+#if NET5_0_OR_GREATER
                     if (WaitToBeRegisteredInvisible.TryDequeue(out var meta))
                     {
+#endif
+#if NETFRAMEWORK
+                        var meta = WaitToBeRegisteredInvisible.Dequeue();
+#endif
                         Register(meta.Item1, meta.Item2, meta.Item3);
+#if NET5_0_OR_GREATER
                     }
+#endif
+
                 }
                 while (WaitToBeRegisteredVisual.Count > 0)
                 {
+#if NET5_0_OR_GREATER
+
                     if (WaitToBeRegisteredVisual.TryDequeue(out var meta))
                     {
-                        var hash = HashCode.Combine(meta.Item1, meta.Item2);
+#endif
+#if NETFRAMEWORK
+                    var meta = WaitToBeRegisteredVisual.Dequeue();
+                    var hash = 2025 + FrameworkSupport.HashCombine(meta.Item1, meta.Item2);
+#endif
+#if NET5_0_OR_GREATER
+                        var hash = 2025 + HashCode.Combine(meta.Item1, meta.Item2);
+#endif
                         RegisterHotKey(WindowhWnd, hash, meta.Item1, meta.Item2);
                         if (Components.TryGetValue(hash, out _))
                         {
@@ -387,7 +405,9 @@ namespace FastHotKeyForWPF
                         {
                             Components.Add(hash, meta.Item3);
                         }
+#if NET5_0_OR_GREATER
                     }
+#endif
                 }
             }
         }
@@ -411,7 +431,12 @@ namespace FastHotKeyForWPF
 
             if (IsAwaked)
             {
+#if NETFRAMEWORK
+                var id = 2025 + FrameworkSupport.HashCombine(component.VirtualModifiers, component.VirtualKeys);
+#endif
+#if NET5_0_OR_GREATER
                 var id = 2025 + HashCode.Combine(component.VirtualModifiers, component.VirtualKeys);
+#endif
                 UnregisterHotKey(WindowhWnd, id);
                 if (Components.TryGetValue(id, out var same))
                 {
@@ -441,7 +466,12 @@ namespace FastHotKeyForWPF
 
             if (IsAwaked)
             {
+#if NETFRAMEWORK
+                var id = 2025 + FrameworkSupport.HashCombine(modifiers, triggers);
+#endif
+#if NET5_0_OR_GREATER
                 var id = 2025 + HashCode.Combine(modifiers, triggers);
+#endif
                 Unregister(modifiers, triggers);
                 var reg = RegisterHotKey(WindowhWnd, id, modifiers, triggers);
 
@@ -465,7 +495,12 @@ namespace FastHotKeyForWPF
         }
         public static bool Unregister(uint modifiers, uint triggers)
         {
+#if NETFRAMEWORK
+            var id = 2025 + FrameworkSupport.HashCombine(modifiers, triggers);
+#endif
+#if NET5_0_OR_GREATER
             var id = 2025 + HashCode.Combine(modifiers, triggers);
+#endif
             var ureg = UnregisterHotKey(WindowhWnd, id);
             if (Components.TryGetValue(id, out _))
             {
