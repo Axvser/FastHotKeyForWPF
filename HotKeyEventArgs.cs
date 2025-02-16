@@ -7,30 +7,27 @@
         public uint Modifiers => modifiers;
         public uint Keys => triggers;
 
-        public ICollection<VirtualModifiers> GetModifierKeys()
+        public IEnumerable<VirtualModifiers> GetModifierKeys()
         {
-            List<VirtualModifiers> keys = [];
             foreach (VirtualModifiers flag in Enum.GetValues(typeof(VirtualModifiers)))
             {
                 if ((Modifiers & (uint)flag) == (uint)flag && (uint)flag != 0x0000)
                 {
-                    keys.Add(flag);
+                    yield return flag;
                 }
             }
-            return keys;
         }
-
         public VirtualKeys GetVirtualKey()
         {
-            List<VirtualKeys> keys = [];
+            VirtualKeys key = 0x0000;
             foreach (VirtualKeys flag in Enum.GetValues(typeof(VirtualKeys)))
             {
-                if ((Keys & (uint)flag) == (uint)flag && (uint)flag != 0x0000)
+                if ((Keys & (uint)flag) == (uint)flag && (uint)flag != 0x0000 && flag > key)
                 {
-                    keys.Add(flag);
+                    key = flag;
                 }
             }
-            return keys.Max();
+            return key;
         }
     }
 }
