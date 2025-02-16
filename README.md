@@ -237,6 +237,8 @@ namespace WpfApp4
 | UpdateHotKey                       | Updates the hotkey's virtual modifiers and keys based on the current state, setting the Text property accordingly. Calls OnHotKeyUpdating and OnHotKeyUpdated.                                                |
 | OnHotKeyUpdating                   | Partial method called just before the hotkey is updated.                                                                                                                                                    |
 | OnHotKeyUpdated                    | Partial method called just after the hotkey is updated.                                                                                                                                                     |
+| OnFailed                           | Triggered when registration fails |
+| OnSuccess                          | Triggered on successful registration |
 
 ---
 
