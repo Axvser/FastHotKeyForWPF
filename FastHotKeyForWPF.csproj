@@ -49,7 +49,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
-	  <PackageReference Include="FastHotKeyForWPF.Generator" Version="1.2.3" />
+	  <PackageReference Include="FastHotKeyForWPF.Generator" Version="1.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>

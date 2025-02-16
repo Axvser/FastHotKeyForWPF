@@ -6,6 +6,7 @@ namespace FastHotKeyForWPF
     public static class LocalHotKey
     {
 #if NETFRAMEWORK
+
         public static void Register(KeyEventHandler keyevent, params Key[] keys)
         {
             var hashset = new HashSet<Key>();
@@ -21,6 +22,24 @@ namespace FastHotKeyForWPF
             else
             {
                 LocalHotKeyInjector.Injectors.Add(Application.Current.MainWindow, [injector]);
+            }
+        }
+        public static void Register(IInputElement target, KeyEventHandler keyevent, params Key[] keys)
+        {
+            var hashset = new HashSet<Key>();
+            foreach (var key in keys)
+            {
+                hashset.Add(key);
+            }
+            var injector = new LocalHotKeyInjector(target, hashset, keyevent);
+            if (LocalHotKeyInjector.Injectors.TryGetValue(target, out var injectorSet))
+            {
+
+                injectorSet.Add(injector);
+            }
+            else
+            {
+                LocalHotKeyInjector.Injectors.Add(target, [injector]);
             }
         }
         public static void Unregister(params Key[] keys)
@@ -81,8 +100,10 @@ namespace FastHotKeyForWPF
                 if (!injectorSet.Any()) LocalHotKeyInjector.Injectors.Remove(target);
             }
         }
+
 #endif
 #if NET5_0_OR_GREATER
+
         public static void Register(HashSet<Key> keys, KeyEventHandler keyevent)
         {
             var injector = new LocalHotKeyInjector(Application.Current.MainWindow, keys, keyevent);
@@ -94,6 +115,19 @@ namespace FastHotKeyForWPF
             else
             {
                 LocalHotKeyInjector.Injectors.Add(Application.Current.MainWindow, [injector]);
+            }
+        }
+        public static void Register(IInputElement target,HashSet<Key> keys, KeyEventHandler keyevent)
+        {
+            var injector = new LocalHotKeyInjector(target, keys, keyevent);
+            if (LocalHotKeyInjector.Injectors.TryGetValue(target, out var injectorSet))
+            {
+
+                injectorSet.Add(injector);
+            }
+            else
+            {
+                LocalHotKeyInjector.Injectors.Add(target, [injector]);
             }
         }
         public static void Unregister(HashSet<Key> keys)
@@ -171,6 +205,7 @@ namespace FastHotKeyForWPF
                 }
             }
         }
+
 #endif
         public static void Unregister(IInputElement target)
         {

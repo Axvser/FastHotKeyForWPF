@@ -10,7 +10,7 @@ Get →
 Versions →
 
 - [2.4.0](#) `LTS` `net 6` `Non-SourceGenerator` `Old API`
-- [3.0.0](#) `LTS` `net 5` `net framework4.7.1` `SourceGenerator` `New API`
+- [3.0.0](#) `LTS` `net 5` `net framework4.7.1`
 
 API differences →
 
