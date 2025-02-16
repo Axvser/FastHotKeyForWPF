@@ -1,6 +1,6 @@
 ﻿# FastHotKeyForWPF
 
-Build `global hotkeys` elegantly
+Build `hotkey` elegantly
 
 Get →
 
@@ -9,10 +9,25 @@ Get →
 
 Versions →
 
-- [2.9.0](#) `alpha` `net 5`
-- [2.9.1](#) `alpha` `net 5` `net framework4.7.1`
+- [2.4.0](#) `LTS` `net 6` `Non-SourceGenerator` `Old API`
+- [3.0.0](#) `LTS` `net 5` `net framework4.7.1` `SourceGenerator` `New API`
 
-The syntax for registering hotkeys may vary slightly from framework to framework, mainly due to how collections are represented in function parameters.The documentation only demonstrates the syntax in `net 5`
+API differences →
+
+The .NET framework does not support the use of `collection expressions`. Therefore, compared with the API of .NET Core, the API of .NET framework has made some adjustments `in the way collections are presented as function parameters`, but overall they are consistent, and there is no need to worry.
+
+---
+
+# Catalogue
+
+- [HotKey API](#ⅠInvisible)
+  - [Invisible](#ⅠInvisible) `Only C# Code`
+    - [Global HotKey](#Global)
+    - [Local HotKey](#Local)
+  - [Visual](#ⅡVisual) `Custom UserControl For HotKey Settings`
+- [Key Helper](#keyhelper)
+  - [Test Keys](#testkeys)
+  - [uint Combine & Parse](#uintcombine&parse)
 
 ---
 
@@ -223,3 +238,30 @@ namespace WpfApp4
 | OnHotKeyUpdating                   | Partial method called just before the hotkey is updated.                                                                                                                                                    |
 | OnHotKeyUpdated                    | Partial method called just after the hotkey is updated.                                                                                                                                                     |
 
+---
+
+# KeyHelper `net 5` `net framework4.7.1`
+
+- ## Test Keys
+
+  - You can specify a modifier and then do the following, using Ctrl as an example
+
+  ```csharp
+    KeyHelper.Test(VirtualModifiers.Ctrl);
+  ```
+
+  - When the test is turned on, hotkeys are automatically registered. You can trigger these hotkeys to know whether a Key is supported by the library, or which one the Key corresponds to in the enumeration
+
+  ```csharp
+    MessageBox.Show($"Pressed Ctrl + {virtualKey}");
+  ```
+
+- ## uint Combine & Parse
+
+```csharp
+  var modifiers = new VirtualModifiers[] { VirtualModifiers.Ctrl, VirtualModifiers.Shift, VirtualModifiers.Alt };
+
+  var combined = modifiers.GetUint();
+
+  var parsed = combined.GetModifiers();
+```
