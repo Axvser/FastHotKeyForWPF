@@ -83,6 +83,7 @@ public partial class HotKeyBox : UserControl
 |-------------------------------|-------------------------------|
 | `Register(target, keys)`      | 注册控件级热键                |
 | `Unregister(target)`          | 注销控件所有热键              |
+| `RegisterMainWindow(keys)`    | 注册主窗口级热键              |
 | `UnregisterMainWindow()`      | 注销主窗口所有热键            |
 
 ### 完整文档 📚
@@ -168,11 +169,12 @@ public partial class HotKeyBox : UserControl
 
 #### LocalHotKey
 
-| Method                          | Description                   |
-|---------------------------------|-------------------------------|
-| `Register(target, keys)`        | Register control-level hotkey |
-| `Unregister(target)`            | Unregister all control hotkeys|
-| `UnregisterMainWindow()`        | Clear main window hotkeys     |
+| Method                          | Description                           |
+|---------------------------------|---------------------------------------|
+| `Register(target, keys)`        | Register control-level hotkey         |
+| `Unregister(target)`            | Unregister all control hotkeys        |
+| `RegisterMainWindow(keys)`      | Register mainwindow-level hotkeys     |
+| `UnregisterMainWindow()`        | Clear main window hotkeys             |
 
 ### Full Documentation 📚
 
