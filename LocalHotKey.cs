@@ -5,36 +5,6 @@ namespace FastHotKeyForWPF
 {
     public static class LocalHotKey
     {
-        public static void Register(KeyEventHandler keyevent, params Key[] keys)
-        {
-            var hashset = new HashSet<Key>();
-            foreach (var key in keys)
-            {
-                hashset.Add(key);
-            }
-            var injector = new LocalHotKeyInjector(Application.Current.MainWindow, hashset, keyevent);
-            if (LocalHotKeyInjector.Injectors.TryGetValue(Application.Current.MainWindow, out var injectorSet))
-            {
-                injectorSet.Add(injector);
-            }
-            else
-            {
-                LocalHotKeyInjector.Injectors.Add(Application.Current.MainWindow, [injector]);
-            }
-        }
-        public static void Register(HashSet<Key> keys, KeyEventHandler keyevent)
-        {
-            var injector = new LocalHotKeyInjector(Application.Current.MainWindow, keys, keyevent);
-            if (LocalHotKeyInjector.Injectors.TryGetValue(Application.Current.MainWindow, out var injectorSet))
-            {
-
-                injectorSet.Add(injector);
-            }
-            else
-            {
-                LocalHotKeyInjector.Injectors.Add(Application.Current.MainWindow, [injector]);
-            }
-        }
         public static void Register(IInputElement target, KeyEventHandler keyevent, params Key[] keys)
         {
             var hashset = new HashSet<Key>();
@@ -187,6 +157,37 @@ namespace FastHotKeyForWPF
             }
 
             return count;
+        }
+
+        public static void RegisterMainWindow(KeyEventHandler keyevent, params Key[] keys)
+        {
+            var hashset = new HashSet<Key>();
+            foreach (var key in keys)
+            {
+                hashset.Add(key);
+            }
+            var injector = new LocalHotKeyInjector(Application.Current.MainWindow, hashset, keyevent);
+            if (LocalHotKeyInjector.Injectors.TryGetValue(Application.Current.MainWindow, out var injectorSet))
+            {
+                injectorSet.Add(injector);
+            }
+            else
+            {
+                LocalHotKeyInjector.Injectors.Add(Application.Current.MainWindow, [injector]);
+            }
+        }
+        public static void RegisterMainWindow(HashSet<Key> keys, KeyEventHandler keyevent)
+        {
+            var injector = new LocalHotKeyInjector(Application.Current.MainWindow, keys, keyevent);
+            if (LocalHotKeyInjector.Injectors.TryGetValue(Application.Current.MainWindow, out var injectorSet))
+            {
+
+                injectorSet.Add(injector);
+            }
+            else
+            {
+                LocalHotKeyInjector.Injectors.Add(Application.Current.MainWindow, [injector]);
+            }
         }
 
         public static int UnregisterMainWindow(params Key[] keys)
