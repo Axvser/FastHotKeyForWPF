@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netframework4.7.1;net5.0-windows</TargetFrameworks>
+		<TargetFrameworks>netframework4.6.2;net5.0-windows</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<NoWarn>1591</NoWarn>
 		<Nullable>enable</Nullable>
@@ -10,7 +10,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>FastHotKeyForWPF</Title>
-		<Version>3.0.0</Version>
+		<Version>4.0.0</Version>
 		<Authors>Axvser</Authors>
 		<Company></Company>
 		<Description>Gracefully register hotkeys in WPF</Description>
@@ -24,7 +24,7 @@
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 	</PropertyGroup>
-	
+
 	<!-- .NET Framework specific settings -->
 	<ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
 		<Reference Include="System.Core" />
@@ -48,15 +48,15 @@
 		</Resource>
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
-	  <PackageReference Include="FastHotKeyForWPF.Generator" Version="1.3.1" />
+	<ItemGroup>
+		<PackageReference Include="FastHotKeyForWPF.Generator" Version="1.4.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="LICENSE.txt">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		<None Update="LICENSE.txt">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 
 </Project>

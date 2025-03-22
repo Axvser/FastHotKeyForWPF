@@ -5,8 +5,6 @@ namespace FastHotKeyForWPF
 {
     public static class LocalHotKey
     {
-#if NETFRAMEWORK
-
         public static void Register(KeyEventHandler keyevent, params Key[] keys)
         {
             var hashset = new HashSet<Key>();
@@ -17,6 +15,19 @@ namespace FastHotKeyForWPF
             var injector = new LocalHotKeyInjector(Application.Current.MainWindow, hashset, keyevent);
             if (LocalHotKeyInjector.Injectors.TryGetValue(Application.Current.MainWindow, out var injectorSet))
             {
+                injectorSet.Add(injector);
+            }
+            else
+            {
+                LocalHotKeyInjector.Injectors.Add(Application.Current.MainWindow, [injector]);
+            }
+        }
+        public static void Register(HashSet<Key> keys, KeyEventHandler keyevent)
+        {
+            var injector = new LocalHotKeyInjector(Application.Current.MainWindow, keys, keyevent);
+            if (LocalHotKeyInjector.Injectors.TryGetValue(Application.Current.MainWindow, out var injectorSet))
+            {
+
                 injectorSet.Add(injector);
             }
             else
@@ -42,82 +53,7 @@ namespace FastHotKeyForWPF
                 LocalHotKeyInjector.Injectors.Add(target, [injector]);
             }
         }
-        public static void Unregister(params Key[] keys)
-        {
-            var hashset = new HashSet<Key>();
-            foreach (var key in keys)
-            {
-                hashset.Add(key);
-            }
-            if (LocalHotKeyInjector.Injectors.TryGetValue(Application.Current.MainWindow, out var injectorSet))
-            {
-                List<LocalHotKeyInjector> removed = [];
-                foreach (var injector in injectorSet)
-                {
-                    if (hashset.IsSupersetOf(injector._targetKeys))
-                    {
-                        Application.Current.MainWindow.KeyDown -= injector.Receiver;
-                        Application.Current.MainWindow.KeyUp -= injector.ReleaseReceiver;
-                        Application.Current.MainWindow.MouseLeave -= injector.MouseLeave;
-                        removed.Add(injector);
-                    }
-                }
-
-                foreach (var injector in removed)
-                {
-                    injectorSet.Remove(injector);
-                }
-
-                if (!injectorSet.Any()) LocalHotKeyInjector.Injectors.Remove(Application.Current.MainWindow);
-            }
-        }
-        public static void Unregister(IInputElement target, params Key[] keys)
-        {
-            var hashset = new HashSet<Key>();
-            foreach (var key in keys)
-            {
-                hashset.Add(key);
-            }
-            if (LocalHotKeyInjector.Injectors.TryGetValue(target, out var injectorSet))
-            {
-                List<LocalHotKeyInjector> removed = [];
-                foreach (var injector in injectorSet)
-                {
-                    if (hashset.IsSupersetOf(injector._targetKeys))
-                    {
-                        target.KeyDown -= injector.Receiver;
-                        target.KeyUp -= injector.ReleaseReceiver;
-                        target.MouseLeave -= injector.MouseLeave;
-                        removed.Add(injector);
-                    }
-                }
-
-                foreach (var injector in removed)
-                {
-                    injectorSet.Remove(injector);
-                }
-
-                if (!injectorSet.Any()) LocalHotKeyInjector.Injectors.Remove(target);
-            }
-        }
-
-#endif
-#if NET5_0_OR_GREATER
-
-        public static void Register(HashSet<Key> keys, KeyEventHandler keyevent)
-        {
-            var injector = new LocalHotKeyInjector(Application.Current.MainWindow, keys, keyevent);
-            if (LocalHotKeyInjector.Injectors.TryGetValue(Application.Current.MainWindow, out var injectorSet))
-            {
-
-                injectorSet.Add(injector);
-            }
-            else
-            {
-                LocalHotKeyInjector.Injectors.Add(Application.Current.MainWindow, [injector]);
-            }
-        }
-        public static void Register(IInputElement target,HashSet<Key> keys, KeyEventHandler keyevent)
+        public static void Register(IInputElement target, HashSet<Key> keys, KeyEventHandler keyevent)
         {
             var injector = new LocalHotKeyInjector(target, keys, keyevent);
             if (LocalHotKeyInjector.Injectors.TryGetValue(target, out var injectorSet))
@@ -130,32 +66,49 @@ namespace FastHotKeyForWPF
                 LocalHotKeyInjector.Injectors.Add(target, [injector]);
             }
         }
-        public static void Unregister(HashSet<Key> keys)
+
+        public static int Unregister(IInputElement target, params Key[] keys)
         {
-            if (LocalHotKeyInjector.Injectors.TryGetValue(Application.Current.MainWindow, out var injectorSet))
+            int count = 0;
+
+            var hashset = new HashSet<Key>();
+
+            foreach (var key in keys)
+            {
+                hashset.Add(key);
+            }
+
+            if (LocalHotKeyInjector.Injectors.TryGetValue(target, out var injectorSet))
             {
                 List<LocalHotKeyInjector> removed = [];
                 foreach (var injector in injectorSet)
                 {
-                    if (keys.IsSupersetOf(injector._targetKeys))
+                    if (hashset.IsSupersetOf(injector._targetKeys))
                     {
-                        Application.Current.MainWindow.KeyDown -= injector.Receiver;
-                        Application.Current.MainWindow.KeyUp -= injector.ReleaseReceiver;
-                        Application.Current.MainWindow.MouseLeave -= injector.MouseLeave;
+                        target.KeyDown -= injector.Receiver;
+                        target.KeyUp -= injector.ReleaseReceiver;
+                        target.MouseLeave -= injector.MouseLeave;
                         removed.Add(injector);
                     }
                 }
 
                 foreach (var injector in removed)
                 {
-                    injectorSet.Remove(injector);
+                    if (injectorSet.Remove(injector))
+                    {
+                        count++;
+                    }
                 }
 
-                if (!injectorSet.Any()) LocalHotKeyInjector.Injectors.Remove(Application.Current.MainWindow);
+                if (!injectorSet.Any()) LocalHotKeyInjector.Injectors.Remove(target);
             }
+
+            return count;
         }
-        public static void Unregister(IInputElement target, HashSet<Key> keys)
+        public static int Unregister(IInputElement target, HashSet<Key> keys)
         {
+            int count = 0;
+
             if (LocalHotKeyInjector.Injectors.TryGetValue(target, out var injectorSet))
             {
                 List<LocalHotKeyInjector> removed = [];
@@ -172,14 +125,21 @@ namespace FastHotKeyForWPF
 
                 foreach (var injector in removed)
                 {
-                    injectorSet.Remove(injector);
+                    if (injectorSet.Remove(injector))
+                    {
+                        count++;
+                    }
                 }
 
                 if (!injectorSet.Any()) LocalHotKeyInjector.Injectors.Remove(target);
             }
+
+            return count;
         }
-        public static void Unregister(IInputElement target, ICollection<HashSet<Key>> keysgroup)
+        public static int Unregister(IInputElement target, ICollection<HashSet<Key>> keysgroup)
         {
+            int count = 0;
+
             if (LocalHotKeyInjector.Injectors.TryGetValue(target, out var injectorSet))
             {
                 foreach (var keys in keysgroup)
@@ -198,17 +158,22 @@ namespace FastHotKeyForWPF
 
                     foreach (var injector in removed)
                     {
-                        injectorSet.Remove(injector);
+                        if (injectorSet.Remove(injector))
+                        {
+                            count++;
+                        }
                     }
 
                     if (!injectorSet.Any()) LocalHotKeyInjector.Injectors.Remove(target);
                 }
             }
-        }
 
-#endif
-        public static void Unregister(IInputElement target)
+            return count;
+        }
+        public static int Unregister(IInputElement target)
         {
+            int count = 0;
+
             if (LocalHotKeyInjector.Injectors.TryGetValue(target, out var injectorSet))
             {
                 foreach (var injector in injectorSet)
@@ -216,12 +181,87 @@ namespace FastHotKeyForWPF
                     target.KeyDown -= injector.Receiver;
                     target.KeyUp -= injector.ReleaseReceiver;
                     target.MouseLeave -= injector.MouseLeave;
+                    count++;
                 }
                 LocalHotKeyInjector.Injectors.Remove(target);
             }
+
+            return count;
         }
-        public static void Unregister()
+
+        public static int UnregisterMainWindow(params Key[] keys)
         {
+            int count = 0;
+
+            var hashset = new HashSet<Key>();
+
+            foreach (var key in keys)
+            {
+                hashset.Add(key);
+            }
+
+            if (LocalHotKeyInjector.Injectors.TryGetValue(Application.Current.MainWindow, out var injectorSet))
+            {
+                List<LocalHotKeyInjector> removed = [];
+                foreach (var injector in injectorSet)
+                {
+                    if (hashset.IsSupersetOf(injector._targetKeys))
+                    {
+                        Application.Current.MainWindow.KeyDown -= injector.Receiver;
+                        Application.Current.MainWindow.KeyUp -= injector.ReleaseReceiver;
+                        Application.Current.MainWindow.MouseLeave -= injector.MouseLeave;
+                        removed.Add(injector);
+                    }
+                }
+
+                foreach (var injector in removed)
+                {
+                    if (injectorSet.Remove(injector))
+                    {
+                        count++;
+                    }
+                }
+
+                if (!injectorSet.Any()) LocalHotKeyInjector.Injectors.Remove(Application.Current.MainWindow);
+            }
+
+            return count;
+        }
+        public static int UnregisterMainWindow(HashSet<Key> keys)
+        {
+            int count = 0;
+
+            if (LocalHotKeyInjector.Injectors.TryGetValue(Application.Current.MainWindow, out var injectorSet))
+            {
+                List<LocalHotKeyInjector> removed = [];
+                foreach (var injector in injectorSet)
+                {
+                    if (keys.IsSupersetOf(injector._targetKeys))
+                    {
+                        Application.Current.MainWindow.KeyDown -= injector.Receiver;
+                        Application.Current.MainWindow.KeyUp -= injector.ReleaseReceiver;
+                        Application.Current.MainWindow.MouseLeave -= injector.MouseLeave;
+                        removed.Add(injector);
+                    }
+                }
+
+                foreach (var injector in removed)
+                {
+                    if (injectorSet.Remove(injector))
+                    {
+                        count++;
+                    }
+                }
+
+                if (!injectorSet.Any()) LocalHotKeyInjector.Injectors.Remove(Application.Current.MainWindow);
+            }
+
+            return count;
+        }
+        public static int UnregisterMainWindow()
+        {
+            var count = 0;
+
             if (LocalHotKeyInjector.Injectors.TryGetValue(Application.Current.MainWindow, out var injectorSet))
             {
                 foreach (var injector in injectorSet)
@@ -230,8 +270,13 @@ namespace FastHotKeyForWPF
                     Application.Current.MainWindow.KeyUp -= injector.ReleaseReceiver;
                     Application.Current.MainWindow.MouseLeave -= injector.MouseLeave;
                 }
-                LocalHotKeyInjector.Injectors.Remove(Application.Current.MainWindow);
+                if (LocalHotKeyInjector.Injectors.Remove(Application.Current.MainWindow))
+                {
+                    count++;
+                }
             }
+
+            return count;
         }
     }
 }

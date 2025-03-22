@@ -243,11 +243,9 @@ namespace FastHotKeyForWPF
 #if NETFRAMEWORK
                 GlobalHotKey.Register(VirtualModifiers.Ctrl, virtualKey, new HotKeyEventHandler((instance, args) =>
                 {
-                    // 显示按下的组合键数量
                     MessageBox.Show($"Pressed Ctrl + {virtualKey}");
                 }));
-#endif
-#if NET5_0_OR_GREATER
+#elif NET
                 GlobalHotKey.Register(testModifiers, virtualKey, [(sender,e) =>
                 {
                     MessageBox.Show($"Pressed Ctrl + {virtualKey}");
@@ -255,10 +253,12 @@ namespace FastHotKeyForWPF
 #endif
             }
         }
+
         public static uint GetUint(this ICollection<VirtualModifiers> source)
         {
             return source.Any() ? (uint)source.Aggregate((current, next) => current | next) : 0x0000;
         }
+
         public static IEnumerable<VirtualModifiers> GetModifiers(this uint source)
         {
             foreach (VirtualModifiers modifier in Enum.GetValues(typeof(VirtualModifiers)))
@@ -269,11 +269,10 @@ namespace FastHotKeyForWPF
                 }
             }
         }
-#if NET5_0_OR_GREATER
+
         public static IEnumerable<string> GetNames(this ICollection<VirtualModifiers> source)
         {
             return source.Select(m => m.ToString());
         }
-#endif
     }
 }
