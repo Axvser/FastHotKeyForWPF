@@ -1,388 +1,179 @@
-﻿# FastHotKeyForWPF
+﻿# FastHotKeyForWPF 🚀
 
-Build `hotkey` elegantly
+[中文](#中文) | [English](#english)
 
-Get →
+<a name="中文"></a>
+## 中文版
 
-- [github](https://github.com/Axvser/FastHotKeyForWPF)
-- [nuget](https://www.nuget.org/packages/FastHotKeyForWPF/)
+### 简介 📖
 
-Versions →
+用优雅的方式构建WPF热键功能，支持全局/本地热键注册、可视化控件、源码生成器等特性
 
-- [2.4.0](#) `LTS` `net 6` `Non-SourceGenerator`
-- [3.0.0](#) `LTS` `net 5` `net framework4.7.1`
-- [4.0.0](#) `LTS` `net 5` `net framework4.6.2` `Unified API`
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/Axvser/FastHotKeyForWPF)
+[![NuGet](https://img.shields.io/nuget/v/FastHotKeyForWPF?color=green&logo=nuget)](https://www.nuget.org/packages/FastHotKeyForWPF/)
 
----
+### 版本矩阵 📦
 
-Update →
+| 版本   | 类型 | 目标框架                   | 特性               |
+|--------|------|----------------------------|--------------------|
+| 2.4.0  | LTS  | .NET 6                     | 非源码生成器       |
+| 3.0.0  | LTS  | .NET 5 / .NET Framework 4.7.1 | 基础功能           |
+| 4.0.0  | LTS  | .NET 5 / .NET Framework 4.6.2 | 统一API          |
 
-1. Unified API, whether in 'net' or 'net framework', can use the same code to manage hot keys
+### 最新特性 ✨
 
-2. The methods for logging out of local hotkeys have also been optimized, and now they return the number of local hotkeys that were successfully logged out, making it easier to determine when logging out of local hotkeys.
+1. **统一API** - 跨框架一致的操作体验
+2. **增强注销** - 返回成功注销的热键数量
+3. **源码生成器** - 支持.NET Framework（需手动配置）
+4. **文档升级** - 新增函数原型速查表
 
-3. The `Source Generator` is now available under the `net framework`
-   - (1) You need to modify the `.csproj` file to add the following code
-   ```xml
-   <LangVersion>latest</LangVersion>
-   ```
-   - (2) You need to add the generator manually
-   - `...\packages\FastHotKeyForWPF.Generator.1.4.0\analyzers\dotnet\cs\FastHotKeyForWPF.Generator.dll"`
-  
-   - After completing the above steps, you can use `Source Generator` just as you would in `net`
+### 快速开始 🚀
 
-4. Documentation added function prototype view
-
----
-
-# Catalogue
-
-- [HotKey API](#ⅠInvisible)
-  - [Invisible](#ⅠInvisible) `Set the hotkey in an encoded manner`
-    - [Global HotKey](#Global)
-    - [Local HotKey](#Local)
-  - [Visual](#ⅡVisual) `Custom UserControl For HotKey Settings`
-    - [Source Generator](##1.UseSourceGenerator)
-    - [Layout & DataBinding](##2.Layout&DataBinding)
-    - [Component API](##HotKeyBoxGeneratedMembersReference)
-- [Key Helper](#keyhelper)
-  - [Test Keys](#testkeys)
-  - [uint Combine & Parse](#uintcombine&parse)
-- [Function Prototype](#FunctionPrototype)
-  - [GlobalHotKey](#GlobalHotKey)
-  - [LocalHotKey](#LocalHotKey)
-  - [KeyHelper](#KeyHelper)
-
----
-
-# Ⅰ Invisible
-
-This pattern means that you don't need to create user controls, but do everything related to hotkeys directly in code
-
-- ## Global
-
-You can register globally available hotkeys
-
-- Before a hotkey can be registered, the GlobalHotKey must be awaked in place
-
-- It can also be triggered when the mouse is not located within the program
-
-- Non-system keys are limited to one
+#### Ⅰ 代码注册热键
 
 ```csharp
-using FastHotKeyForWPF;
-using System.Windows;
+// 全局热键（任意窗口生效）
+GlobalHotKey.Register(
+    VirtualModifiers.Ctrl | VirtualModifiers.Alt,
+    VirtualKeys.F1,
+    (sender, e) => MessageBox.Show("全局热键触发！")
+);
 
-namespace WpfApp4
+// 本地热键（指定控件生效）
+LocalHotKey.Register(
+    textBox1, 
+    new[] { Key.LeftCtrl, Key.K, Key.D },
+    (sender, e) => textBox1.Text = "Ctrl+K+D 已触发"
+);
+```
+
+#### Ⅱ 可视化热键控件
+
+1. 创建自定义控件（自动生成热键逻辑）
+
+```csharp
+[HotKeyComponent]
+public partial class HotKeyBox : UserControl
 {
-    public partial class MainWindow : Window
-    {
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-
-            // Here you get the window handle, and once you're done, you can use the hotkey registration, modification, and other functions provided by the library
-            GlobalHotKey.Awake();
-
-            // Add HotKey
-            GlobalHotKey.Register(VirtualModifiers.Ctrl | VirtualModifiers.Alt, // modifiers
-                                  VirtualKeys.F1,                               // key
-                                  [Test1, Test2]);                              // events
-
-            // Remove HotKey
-            GlobalHotKey.Unregister(VirtualModifiers.Ctrl | VirtualModifiers.Alt,
-                                    VirtualKeys.F1);
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            // Release the hotkey before the program closes
-            GlobalHotKey.Dispose();
-
-            base.OnClosed(e);
-        }
-
-        private void Test1(object? sender, HotKeyEventArgs e)
-        {
-            // If you manage hotkeys in invisible mode, sender will always be null
-            if (sender != null && sender is HotKeyBox hkb)
-            {
-                // If you're managing hotkeys in visual mode, the sender may be your custom user control
-            }
-
-            // Of course, you can use both modes, or you can have different hotkeys trigger the same handler event
-        }
-
-        private void Test2(object? sender, HotKeyEventArgs e)
-        {
-            MessageBox.Show($"{e.Modifiers}");
-            // Retrieves the value of the triggered hotkey
-
-            MessageBox.Show($"{e.GetModifierKeys().Count}");
-            // system modifier can have more than one valid value
-
-            MessageBox.Show($"{e.GetVirtualKey()}");
-            // Not a system modifier; only one valid Key exists
-        }
-    }
+    // 控件交互逻辑...
 }
 ```
 
-- ## Local
-
-You can register multiple local hotkeys for a control as follows
-
-- Hotkeys can be triggered when the focus is on the control
-
-- Multiple non-system keys are allowed to participate
-
-```csharp
-  // Inject hotkeys into MainWindow without specifying a registration target
-  LocalHotKey.Register([Key.LeftCtrl, Key.K, Key.D],
-      (sender, e) =>
-      {
-          MessageBox.Show("Ctrl + K + D");
-      });
-
-  // Inject hotkeys for the specified target
-  LocalHotKey.Register(inputbox, [Key.LeftAlt, Key.K, Key.D],
-      (sender, e) =>
-      {
-          MessageBox.Show("Alt + K + D");
-      });
-  LocalHotKey.Register(inputbox, [Key.LeftAlt, Key.LeftCtrl, Key.E, Key.F],
-      (sender, e) =>
-      {
-          MessageBox.Show("Alt + Ctrl + E + F");
-      });
-
-  // Delete all hotkeys of control
-  LocalHotKey.Unregister(inputbox);
-
-  // Removes the specified hotkey
-  LocalHotKey.Unregister(inputbox, [Key.LeftAlt, Key.K, Key.D]);
-```
-
----
-
-# Ⅱ Visual
-
-Customize a user control for setting hotkeys
-
-- ## 1. Use Source Generator 
-
-```csharp
-using FastHotKeyForWPF;
-using System.Windows.Controls;
-
-namespace WpfApp4
-{
-    [HotKeyComponent]
-    public partial class HotKeyBox : UserControl
-    {
-        public HotKeyBox()
-        {
-            InitializeComponent();
-        }
-
-        private void TextBox_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (sender is TextBox box)
-            {
-                box.Focusable = true;
-                box.Focus();
-            }
-        }
-
-        private void TextBox_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            if (sender is TextBox box)
-            {
-                box.Focusable = false;
-                System.Windows.Input.Keyboard.ClearFocus();
-            }
-        }
-    }
-}
-
-```
-
-- ## 2. Layout & Data Binding
+2. XAML绑定热键属性
 
 ```xml
-<UserControl x:Class="WpfApp4.HotKeyBox"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:WpfApp4"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Template>
-        <ControlTemplate>
-            <!-- [ OnHotKeyReceived ] is automatically generated -->
-            <TextBox KeyDown="OnHotKeyReceived"
-                     MouseEnter="TextBox_MouseEnter"
-                     MouseLeave="TextBox_MouseLeave"
-                     Text="{Binding Text, RelativeSource={RelativeSource AncestorType=local:HotKeyBox}}" 
-                     Foreground="{TemplateBinding Foreground}" 
-                     FontSize="{TemplateBinding FontSize}"
-                     IsReadOnly="True"/>
-        </ControlTemplate>
-    </UserControl.Template>
-</UserControl>
-
+<TextBox KeyDown="OnHotKeyReceived"
+         Text="{Binding HotkeyText, RelativeSource={RelativeSource AncestorType=local:HotKeyBox}}"/>
 ```
 
-- ## 3. Use your custom control to build the interface for hot key settings.
+### 核心API 🔧
+
+#### GlobalHotKey
+
+| 方法                          | 说明                          |
+|-------------------------------|-------------------------------|
+| `Awake()`                     | 初始化热键系统                |
+| `Register(modifiers, keys)`   | 注册全局热键                  |
+| `Unregister(modifiers, keys)` | 注销全局热键                  |
+| `Dispose()`                   | 释放所有热键资源              |
+
+#### LocalHotKey
+
+| 方法                          | 说明                          |
+|-------------------------------|-------------------------------|
+| `Register(target, keys)`      | 注册控件级热键                |
+| `Unregister(target)`          | 注销控件所有热键              |
+| `UnregisterMainWindow()`      | 注销主窗口所有热键            |
+
+### 完整文档 📚
+
+[查看完整函数原型与使用指南](https://github.com/Axvser/FastHotKeyForWPF/wiki)
 
 ---
 
-# HotKeyBox Generated Members Reference
+<a name="english"></a>
+## English Version
 
-This document describes the key components and extensibility points of the auto-generated `HotKeyBox` control.
+### Introduction 📖
 
-## Core Methods Table
+Elegant hotkey implementation for WPF, featuring global/local registration, visual controls, and source generators.
 
-| Method Name                      | Overloadable | Description                                                                                     |
-|----------------------------------|--------------|-------------------------------------------------------------------------------------------------|
-| **Properties**                   |              |                                                                                                 |
-| `IsRegistered`                   | Yes          | Indicates hotkey registration status. Triggers `OnSuccess()`/`OnFailed()` when value changes    |
-| `VirtualModifiers`               | No           | DependencyProperty for modifier keys (Alt/Ctrl/Shift/Win)                                      |
-| `VirtualKeys`                    | No           | DependencyProperty for trigger keys                                                            |
-| **Event Handlers**               |              |                                                                                                 |
-| `Handler`                        | No           | Event triggered when hotkey is activated                                                       |
-| **Core Functionality**           |              |                                                                                                 |
-| `Invoke()`                       | Yes          | Virtual method that fires the hotkey event                                                      |
-| `Covered()`                      | Yes          | Virtual method called when hotkey is overridden by another registration                         |
-| `OnHotKeyReceived()`             | Yes          | Virtual keyboard input handler (WPF KeyEvent processor)                                         |
-| `UpdateHotKey()`                 | Yes          | Virtual method that updates UI and registration status                                          |
-| **Partial Methods**              |              |                                                                                                 |
-| `OnFailed()`                     | Yes          | Source generator hook for failed registration (auto-implementable)                              |
-| `OnSuccess()`                    | Yes          | Source generator hook for successful registration (auto-implementable)                          |
-| `OnModifiersChanged()`           | Yes          | Extensible logic when modifier keys change                                                     |
-| `OnKeysChanged()`                | Yes          | Extensible logic when trigger key changes                                                      |
-| `OnHotKeyInvoking()`             | Yes          | Pre-execution hook for hotkey events                                                           |
-| `OnHotKeyInvoked()`              | Yes          | Post-execution hook for hotkey events                                                          |
-| `OnCovering()`                   | Yes          | Pre-hook for hotkey override process                                                           |
-| `OnCovered()`                    | Yes          | Post-hook for hotkey override process                                                          |
-| `OnHotKeyUpdating()`             | Yes          | Pre-hook for hotkey UI update                                                                  |
-| `OnHotKeyUpdated()`              | Yes          | Post-hook for hotkey UI update                                                                 |
-| **DProperty Callbacks**          |              |                                                                                                 |
-| `Inner_OnModifiersChanged()`     | No           | Automatic registration handler for modifier changes (generated)                                |
-| `Inner_OnKeysChanged()`          | No           | Automatic registration handler for key changes (generated)                                     |
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/Axvser/FastHotKeyForWPF)
+[![NuGet](https://img.shields.io/nuget/v/FastHotKeyForWPF?color=green&logo=nuget)](https://www.nuget.org/packages/FastHotKeyForWPF/)
 
-## Key Overload Guidelines
-1. **Virtual Methods** (`Invoke`, `Covered`, etc.):  
-   Override in derived classes to modify base behavior
+### Version Matrix 📦
 
-2. **Partial Methods** (`On[Action]`):  
-   Implement in separate partial class files to extend functionality without modifying generated code
+| Version | Type | Target Frameworks            | Features          |
+|---------|------|-------------------------------|-------------------|
+| 2.4.0   | LTS  | .NET 6                        | Non-SourceGen     |
+| 3.0.0   | LTS  | .NET 5 / .NET Framework 4.7.1 | Basic Features    |
+| 4.0.0   | LTS  | .NET 5 / .NET Framework 4.6.2 | Unified API       |
 
-3. **Dependency Properties**:  
-   Use standard WPF patterns for value change handling (bindings/styles/triggers)
+### Highlights ✨
 
-> 💡 All extension points are designed for **zero-conflict modification** - your custom implementations will persist across source generator updates.
+1. **Unified API** - Consistent cross-framework experience
+2. **Enhanced Unregister** - Returns success count
+3. **Source Generator** - .NET Framework support (manual config)
+4. **Documentation** - Added function prototypes quick reference
 
----
+### Quick Start 🚀
 
-# KeyHelper
-
-- ## Test Keys
-
-  - You can specify a modifier and then do the following, using Ctrl as an example
-
-  ```csharp
-    KeyHelper.Test(VirtualModifiers.Ctrl);
-  ```
-
-  - When the test is turned on, hotkeys are automatically registered. You can trigger these hotkeys to know whether a Key is supported by the library, or which one the Key corresponds to in the enumeration
-
-  ```csharp
-    MessageBox.Show($"Pressed Ctrl + {virtualKey}");
-  ```
-
-- ## uint Combine & Parse
+#### Ⅰ Code Registration
 
 ```csharp
-  var modifiers = new VirtualModifiers[] { VirtualModifiers.Ctrl, VirtualModifiers.Shift, VirtualModifiers.Alt };
+// Global hotkey (works system-wide)
+GlobalHotKey.Register(
+    VirtualModifiers.Ctrl | VirtualModifiers.Alt,
+    VirtualKeys.F1,
+    (sender, e) => MessageBox.Show("Global Hotkey Triggered!")
+);
 
-  var combined = modifiers.GetUint();
-
-  var parsed = combined.GetModifiers();
+// Local hotkey (control-specific)
+LocalHotKey.Register(
+    textBox1,
+    new[] { Key.LeftCtrl, Key.K, Key.D },
+    (sender, e) => textBox1.Text = "Ctrl+K+D Activated"
+);
 ```
 
----
+#### Ⅱ Visual Control
 
-# FunctionPrototype
-
-一、GlobalHotKey
-
-Core operation
+1. Create custom control (auto-generated logic)
 
 ```csharp
-public static void Awake() // Initializing the hot key system
-public static void Dispose() // Release all hotkey resources
+[HotKeyComponent]
+public partial class HotKeyBox : UserControl
+{
+    // Control interactions...
+}
 ```
 
-Hotkey registration
+2. XAML Data Binding
 
-```csharp
-public static int Register(IHotKeyComponent component)
-public static int Register(uint modifiers, uint triggers, params HotKeyEventHandler[] handlers)
-public static int Register(VirtualModifiers modifierKeys, VirtualKeys triggerKeys, params HotKeyEventHandler[] handlers)
+```xml
+<TextBox KeyDown="OnHotKeyReceived"
+         Text="{Binding HotkeyText, RelativeSource={RelativeSource AncestorType=local:HotKeyBox}}"/>
 ```
 
-Hotkey logout
+### Core API 🔧
 
-```csharp
-public static bool Unregister(uint modifiers, uint triggers)
-public static bool Unregister(VirtualModifiers modifierKeys, VirtualKeys triggerKeys)
-```
+#### GlobalHotKey
 
-二、LocalHotKey
+| Method                        | Description                   |
+|-------------------------------|-------------------------------|
+| `Awake()`                     | Initialize hotkey system      |
+| `Register(modifiers, keys)`   | Register global hotkey        |
+| `Unregister(modifiers, keys)` | Unregister global hotkey      |
+| `Dispose()`                   | Release all hotkey resources  |
 
-Registration method
+#### LocalHotKey
 
-```csharp
-public static void Register(KeyEventHandler keyevent, params Key[] keys)
-public static void Register(HashSet<Key> keys, KeyEventHandler keyevent)
-public static void Register(IInputElement target, KeyEventHandler keyevent, params Key[] keys)
-public static void Register(IInputElement target, HashSet<Key> keys, KeyEventHandler keyevent)
-```
+| Method                          | Description                   |
+|---------------------------------|-------------------------------|
+| `Register(target, keys)`        | Register control-level hotkey |
+| `Unregister(target)`            | Unregister all control hotkeys|
+| `UnregisterMainWindow()`        | Clear main window hotkeys     |
 
-Logout method
+### Full Documentation 📚
 
-```csharp
-public static int Unregister(IInputElement target, params Key[] keys)
-public static int Unregister(IInputElement target, HashSet<Key> keys)
-public static int Unregister(IInputElement target, ICollection<HashSet<Key>> keysgroup)
-public static int Unregister(IInputElement target)
-public static int UnregisterMainWindow(params Key[] keys)
-public static int UnregisterMainWindow(HashSet<Key> keys)
-public static int UnregisterMainWindow()
-```
-
-三、KeyHelper
-
-Functional approach
-
-```csharp
-public static void Test(VirtualModifiers testModifiers) 
-// Test whether the native key can be recognized and used for hotkeys
-```
-
-Extension method
-
-```csharp
-public static uint GetUint(this ICollection<VirtualModifiers> source)
-public static IEnumerable<VirtualModifiers> GetModifiers(this uint source)
-public static IEnumerable<string> GetNames(this ICollection<VirtualModifiers> source)
-```
-
----
+[View Complete API Reference](https://github.com/Axvser/FastHotKeyForWPF/wiki)
